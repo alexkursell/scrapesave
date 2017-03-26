@@ -47,7 +47,7 @@ function getFindSelector(e){
     };
   };
   
-  return new NodeAttributes(nodeType, classNames, id, idx)
+  return new NodeAttributes(nodeType, classNames, id, idx);
 
 };
 
