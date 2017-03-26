@@ -3,15 +3,16 @@ jq.src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js";
 document.getElementsByTagName('head')[0].appendChild(jq);
 
 
-function NodeAttributes(nodeType, classes, id, index) {
+function NodeAttributes(nodeType, classes, id, index, orig) {
     this.nodeType = nodeType;
     this.classes = classes;
     this.id = id;
     this.index = index;
     this.searchRank = null;
+    this.originalObject = orig;
 }
 
-function AttributeComparator(o, n){
+function comapareNodeAtributes(o, n){
 	var os = 0;
 	var ns = 0;
 
@@ -40,7 +41,8 @@ function AttributeComparator(o, n){
 }
 
 
-function recurseWalk(prev, attrs, idx){
+function recurseWalk(prev, attrs, idx, confidence){
+	console.log("Level " + idx + " with a confidence of " + confidence * 100 + "%.")
 	var children = $(prev).children(attrs[idx].nodeType);
 
 	if (children.length < 1){
@@ -48,8 +50,8 @@ function recurseWalk(prev, attrs, idx){
 	}
 
 	for(i = 0; i < children.length; i++){
-		children[i] = getFindSelector(children[i]);
-		children[i].searchRank = AttributeComparator(attrs[idx], children[i]);
+		children[i] = new getFindSelector(children[i]);
+		children[i].searchRank = comapareNodeAtributes(attrs[idx], children[i]);
 	}
 
 	children.sort(function(a, b){
@@ -60,8 +62,8 @@ function recurseWalk(prev, attrs, idx){
 		return null;
 	}
 
-	
 
+	recurseWalk(children[children.length - 1].originalObject, attrs, idx + 1, confidence * children[children.length - 1].searchRank);
 
 
 
@@ -105,7 +107,7 @@ function getFindSelector(e) {
         }
     }
 
-    return new NodeAttributes(nodeType, classNames, id, idx);
+    return new NodeAttributes(nodeType, classNames, id, idx, e);
 
 }
 
