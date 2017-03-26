@@ -1,7 +1,3 @@
-var jq = document.createElement('script');
-jq.src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js";
-document.getElementsByTagName('head')[0].appendChild(jq);
-
 
 function NodeAttributes(nodeType, classes, id, index, orig) {
     this.nodeType = nodeType;
@@ -11,6 +7,23 @@ function NodeAttributes(nodeType, classes, id, index, orig) {
     this.searchRank = null;
     this.originalObject = orig;
 }
+
+function parse(s){
+	s = JSON.parse(s);
+
+	for (i = 0; i < s.length; i++){
+		var a = s[i];
+
+		s[i] = new NodeAttributes(a[0], a[1], a[2], a[3], null);
+	}
+
+	return s;
+}
+
+
+var jq = document.createElement('script');
+jq.src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js";
+document.getElementsByTagName('head')[0].appendChild(jq);
 
 function comapareNodeAtributes(o, n){
 	var os = 0;
@@ -130,16 +143,29 @@ $('div').click(function(e) {
     e.stopPropagation();
     if(path == null){
     	path = getSelectorPath($(e.target));
-    	console.log(JSON.stringify(path, function (key, value) {
-    		if (typeof value === 'function') {
-    			return value.toString();
-    		}
-			return value;
-		}));
+
+    	for (i = 0; i < path.length; i++){
+    		a = path[i];
+    		path[i] = [a.nodeType, a.classes, a.id, a.index];
+    	}
+
+    	console.log(JSON.stringify(path));
+
+
+
+
+    } else {
+    	recurseWalk(document, path, 0, 1);
     }
-   
-    recurseWalk(document, path, 0, 1);
+
 });
+
+
+
+
+
+
+
 
 
 /*$('div').click(function(e){
@@ -158,6 +184,6 @@ $('div').click(function(e) {
 };*/
 
 
-[{"nodeType":"HTML","classes":[],"id":null,"index":0,"searchRank":null,"originalObject":{"0":{},"length":1,"prevObject":{"0":{"jQuery112409620110505622657":1},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"BODY","classes":["post-template-default","single","single-post","postid-4326","single-format-standard","s1-collapse","s2-collapse"],"id":null,"index":0,"searchRank":null,"originalObject":{"0":{"jQuery112409620110505622657":1},"length":1,"prevObject":{"0":{"jQuery112409620110505622657":12},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"DIV","classes":[],"id":"pjgm-wrap","index":0,"searchRank":null,"originalObject":{"0":{"jQuery112409620110505622657":12},"length":1,"prevObject":{"0":{"jQuery112409620110505622657":20},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"DIV","classes":[],"id":"pjgm-main","index":1,"searchRank":null,"originalObject":{"0":{"jQuery112409620110505622657":20},"length":1,"prevObject":{"0":{"jQuery112409620110505622657":24},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"DIV","classes":[],"id":"pjgm-box","index":1,"searchRank":null,"originalObject":{"0":{"jQuery112409620110505622657":24},"length":1,"prevObject":{"0":{"jQuery112409620110505622657":25},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"DIV","classes":[],"id":"pjgm-content","index":0,"searchRank":null,"originalObject":{"0":{"jQuery112409620110505622657":25},"length":1,"prevObject":{"0":{"jQuery112409620110505622657":26},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"DIV","classes":["post-4326","post","type-post","status-publish","format-standard","hentry","category-uncategorized","tag-long-post-is-long","tag-rationality"],"id":"post-4326","index":0,"searchRank":null,"originalObject":{"0":{"jQuery112409620110505622657":26},"length":1,"prevObject":{"0":{},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"H1","classes":["pjgm-posttitle"],"id":null,"index":0,"searchRank":null,"originalObject":{"0":{},"context":{},"length":1}}]
+[["HTML",[],null,0],["BODY",["post-template-default","single","single-post","postid-4326","single-format-standard","s1-collapse","s2-collapse"],null,0],["DIV",[],"pjgm-wrap",0],["DIV",[],"pjgm-main",1],["DIV",[],"pjgm-box",1],["DIV",[],"pjgm-content",0],["DIV",["post-4326","post","type-post","status-publish","format-standard","hentry","category-uncategorized","tag-long-post-is-long","tag-rationality"],"post-4326",0],["H1",["pjgm-posttitle"],null,0]]
 
 
