@@ -42,14 +42,22 @@ function comapareNodeAtributes(o, n){
 
 
 function recurseWalk(prev, attrs, idx, confidence){
-	console.log("Level " + idx + " with a confidence of " + confidence * 100 + "%.")
+	console.log("Level " + idx + " with a confidence of " + confidence * 100 + "%.");
+
+	if (idx == attrs.length){
+		console.log("Reached bottom.");
+		console.log($(prev).text());
+		return;
+	}
+
+
 	var children = $(prev).children(attrs[idx].nodeType);
 
 	if (children.length < 1){
 		return null;
 	}
 
-	for(i = 0; i < children.length; i++){
+	for(var i = 0; i < children.length; i++){
 		children[i] = new getFindSelector(children[i]);
 		children[i].searchRank = comapareNodeAtributes(attrs[idx], children[i]);
 	}
@@ -59,6 +67,7 @@ function recurseWalk(prev, attrs, idx, confidence){
 	});
 
 	if (children[children.length - 1].searchRank == 0){
+		console.log("Failed");
 		return null;
 	}
 
@@ -94,7 +103,7 @@ function getFindSelector(e) {
     if (classNames) {
         classNames = $.trim(classNames).replace(/\s\s+/g, ' ').replace(/\s/gi, ".").split(".");
     } else {
-        classNames = null;
+        classNames = [];
     }
 
 
@@ -111,11 +120,25 @@ function getFindSelector(e) {
 
 }
 
+path = null;
+
+
+
 jQuery.noConflict();
 $ = jQuery;
 $('div').click(function(e) {
     e.stopPropagation();
-    console.log(getSelectorPath($(e.target)));
+    if(path == null){
+    	path = getSelectorPath($(e.target));
+    	console.log(JSON.stringify(path, function (key, value) {
+    		if (typeof value === 'function') {
+    			return value.toString();
+    		}
+			return value;
+		}));
+    }
+   
+    recurseWalk(document, path, 0, 1);
 });
 
 
@@ -133,3 +156,8 @@ $('div').click(function(e) {
 	  , 1000);
   }
 };*/
+
+
+[{"nodeType":"HTML","classes":[],"id":null,"index":0,"searchRank":null,"originalObject":{"0":{},"length":1,"prevObject":{"0":{"jQuery112409620110505622657":1},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"BODY","classes":["post-template-default","single","single-post","postid-4326","single-format-standard","s1-collapse","s2-collapse"],"id":null,"index":0,"searchRank":null,"originalObject":{"0":{"jQuery112409620110505622657":1},"length":1,"prevObject":{"0":{"jQuery112409620110505622657":12},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"DIV","classes":[],"id":"pjgm-wrap","index":0,"searchRank":null,"originalObject":{"0":{"jQuery112409620110505622657":12},"length":1,"prevObject":{"0":{"jQuery112409620110505622657":20},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"DIV","classes":[],"id":"pjgm-main","index":1,"searchRank":null,"originalObject":{"0":{"jQuery112409620110505622657":20},"length":1,"prevObject":{"0":{"jQuery112409620110505622657":24},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"DIV","classes":[],"id":"pjgm-box","index":1,"searchRank":null,"originalObject":{"0":{"jQuery112409620110505622657":24},"length":1,"prevObject":{"0":{"jQuery112409620110505622657":25},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"DIV","classes":[],"id":"pjgm-content","index":0,"searchRank":null,"originalObject":{"0":{"jQuery112409620110505622657":25},"length":1,"prevObject":{"0":{"jQuery112409620110505622657":26},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"DIV","classes":["post-4326","post","type-post","status-publish","format-standard","hentry","category-uncategorized","tag-long-post-is-long","tag-rationality"],"id":"post-4326","index":0,"searchRank":null,"originalObject":{"0":{"jQuery112409620110505622657":26},"length":1,"prevObject":{"0":{},"selector":"","context":{},"length":1},"context":{}}},{"nodeType":"H1","classes":["pjgm-posttitle"],"id":null,"index":0,"searchRank":null,"originalObject":{"0":{},"context":{},"length":1}}]
+
+
