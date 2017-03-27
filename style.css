@@ -1,0 +1,22 @@
+#selecthalf{
+	width:29%;
+	float:left;
+}
+
+#previewhalf{
+	width:70%;
+	float:right;
+}
+
+
+
+.inside{
+	width:95%;
+	margin:0 auto;
+}
+
+.roundbox{
+	border:1px solid black;
+	border-radius:5px;
+	width:100%;
+}
