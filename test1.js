@@ -160,30 +160,4 @@ $('div').click(function(e) {
 
 });
 
-
-
-
-
-
-
-
-
-/*$('div').click(function(e){
-	e.stopPropagation();
-  console.log(getFindSelector(e.target));
-});*/
-
-/*function highlight(e, n){
-	if($(e).prop('tagName')){
-	console.log(getFindSelector(e));
-	$(e).css('border', '2px solid blue');
-	setTimeout(function(){
-		highlight($(e).parent().closest('div'), n + 1);}
-	  , 1000);
-  }
-};*/
-
-
-[["HTML",[],null,0],["BODY",["post-template-default","single","single-post","postid-4326","single-format-standard","s1-collapse","s2-collapse"],null,0],["DIV",[],"pjgm-wrap",0],["DIV",[],"pjgm-main",1],["DIV",[],"pjgm-box",1],["DIV",[],"pjgm-content",0],["DIV",["post-4326","post","type-post","status-publish","format-standard","hentry","category-uncategorized","tag-long-post-is-long","tag-rationality"],"post-4326",0],["H1",["pjgm-posttitle"],null,0]]
-
-
+/**/
