@@ -1,7 +1,9 @@
 <html>
 	<head>
 		<title>ScrapeSave</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
+		<script type="text/javascript" src="ui.js"></script>
 	</head>
 	<body>
 		<div id="selecthalf" class="roundbox">
@@ -19,15 +21,11 @@
 			<h3 style="text-align:center">Preview</h3>
 			<div class="inside">
 				<em><h3 style="margin-bottom:0px">Title</h3></em>
-				<input class="roundbox" style="font-size:25px" type="text"></input>
+				<input id="title" class="roundbox" style="font-size:25px" type="text"></input>
 				<br>
 				
 				<em><h3 style="margin-bottom:0px">Body</h3></em>
-				<div class="roundbox" contenteditable="true">
-					loremsssssssssssss
-					<ol>
-						<li>FIRST</li>
-					</ol>
+				<div id="preview" class="roundbox" contenteditable="true">
 				
 				</div>
 				<br>
