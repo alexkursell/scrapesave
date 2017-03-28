@@ -1,14 +1,26 @@
 #selecthalf{
 	width:29%;
 	float:left;
+	height:100%;
+	overflow:hidden;
 }
 
 #previewhalf{
 	width:70%;
+	height:100%;
 	float:right;
 }
 
 
+table td{
+	border-bottom:1px solid grey;
+	border-collapse: collapse;
+}
+
+.flowy{
+	display:flex;
+	flex-direction:column;
+}
 
 .inside{
 	width:95%;
@@ -19,4 +31,13 @@
 	border:1px solid black;
 	border-radius:5px;
 	width:100%;
+}
+
+.highlight{
+	background-color:yellow;
+
+}
+
+.scrollable{
+	overflow-y:auto;
 }
