@@ -1,7 +1,7 @@
 #selecthalf{
 	width:20%;
 	float:left;
-	height:87%;
+	height:85%;
 	overflow:hidden;
 	margin:0.5%;
 }
@@ -9,7 +9,7 @@
 #previewhalf{
 	flex:1;
 	width:80%;
-	height:87%;
+	height:85%;
 	max-height:100%;
 	margin:0.5%;
 	float:right;
@@ -21,6 +21,9 @@
 	height:10%;
 	width:99%;
 	margin:0.5%;
+	padding:5px;
+	box-sizing: border-box;
+
 }
 
 #godcontainer{
@@ -56,11 +59,13 @@ table td{
 
 .smallinput{
 	border:1px solid black;
-	width:99%;
 	font-size:20px;
-	margin-bottom:5px;
-	resize:vertical;
+	width:100%;
 
+}
+
+.margin5{
+	margin:5px;
 }
 .highlight{
 	background-color:yellow;
@@ -72,6 +77,14 @@ table td{
 	flex:1;
 }
 
+.nomargin{
+	margin:0px;
+}
 .boxlabel{
 	margin-bottom:0px;
+	float:left;
+}
+
+.rightbutton{
+	float:right;
 }
