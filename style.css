@@ -4,6 +4,8 @@
 	height:85%;
 	overflow:hidden;
 	margin:0.5%;
+	box-shadow: 10px 10px 5px #888888;
+	background-color:#E2E2E2;
 }
 
 #previewhalf{
@@ -14,6 +16,8 @@
 	margin:0.5%;
 	float:right;
 	overflow:hidden;
+	box-shadow: 10px 10px 5px #888888;
+	background-color:#E2E2E2;
 }
 
 #controls{
@@ -23,7 +27,9 @@
 	margin:0.5%;
 	padding:5px;
 	box-sizing: border-box;
-
+	box-shadow: 10px 10px 5px #888888;
+	background-color:#E2E2E2;
+	overflow:hidden;
 }
 
 #godcontainer{
@@ -33,10 +39,32 @@
 	width:100%;
 }
 
+#preview{
+	background-color: white;
+}
+
+#titleinput{
+	background-color: white;
+}
+
+#titlelist{
+	background-color: white;
+	word-wrap: break-word;
+	white-space: pre-wrap;
+}
 
 table td{
 	border-bottom:1px solid grey;
 	border-collapse: collapse;
+	
+	word-wrap: break-word;
+}
+
+.scrollable{
+	overflow-y:auto;
+	overflow-x: hidden;
+	flex:1;
+	word-wrap: break-word;
 }
 
 .flowy{
@@ -57,10 +85,15 @@ table td{
 	width:99%;
 }
 
+.inputspan{
+	display:flex;
+	flex-direction:row;
+}
 .smallinput{
 	border:1px solid black;
 	font-size:20px;
-	width:100%;
+	align-self:left;
+	flex:1;
 
 }
 
@@ -72,19 +105,22 @@ table td{
 
 }
 
-.scrollable{
-	overflow-y:auto;
-	flex:1;
-}
+
 
 .nomargin{
 	margin:0px;
 }
 .boxlabel{
 	margin-bottom:0px;
+	width:100%;
 	float:left;
 }
 
 .rightbutton{
-	float:right;
+	border:1px solid black;
+	background-color:white;
+	color:black;
+	margin-left:1px;
+	width:75px;
+	font-size:20px;
 }
