@@ -21,9 +21,9 @@ function parse(s){
 }
 
 
-var jq = document.createElement('script');
+/*var jq = document.createElement('script');
 jq.src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js";
-document.getElementsByTagName('head')[0].appendChild(jq);
+document.getElementsByTagName('head')[0].appendChild(jq);*/
 
 function comapareNodeAtributes(o, n){
 	var os = 0;
@@ -135,11 +135,35 @@ function getFindSelector(e) {
 
 path = null;
 
+console.log("hi");
+
+/*jQuery.noConflict();
+$ = jQuery;*/
+
+$(document).ready(function(){
+	$("<link/>", {
+	   rel: "stylesheet",
+	   type: "text/css",
+	   href: "sidestyle.css"
+	}).appendTo("head");
+
+	$('body').wrapInner("<div id='scrapesave-wrapper'></div>");
+	$('body').append("<div id='scrapesave-sidebar'></div>");
+	$("#scrapesave-sidebar").append("TESTLAYOUT");
+		
+});
 
 
-jQuery.noConflict();
-$ = jQuery;
-$('div').click(function(e) {
+
+
+
+
+
+
+
+
+
+/*$('div').click(function(e) {
     e.stopPropagation();
     if(path == null){
     	path = getSelectorPath($(e.target));
@@ -158,6 +182,6 @@ $('div').click(function(e) {
     	recurseWalk(document, path, 0, 1);
     }
 
-});
+});*/
 
 /**/
