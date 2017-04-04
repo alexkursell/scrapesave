@@ -148,8 +148,19 @@ $(document).ready(function(){
 	}).appendTo("head");
 
 	$('body').wrapInner("<div id='scrapesave-wrapper'></div>");
-	$('body').append("<div id='scrapesave-sidebar'></div>");
-	$("#scrapesave-sidebar").append("TESTLAYOUT");
+	$('body').append("<div id='scrapesave-sidebar'><div id='scrapesave-sidebar-fixed'</div></div>");
+	$("#scrapesave-sidebar-fixed").append(`<h3 style='text-align:center;width:inherit;'>ScrapeSave</h3>
+		<form id='chooseelement'>
+			<input type='radio' name='item' value='title'>Title</input>
+			<input type='radio' name='item' value='body'>Body</input>
+			<input type='radio' name='item' value='next'>Next Page Link</input>
+
+		</form>`);
+
+	$('a').click(function(e){
+		e.preventDefault();
+		$(e.target).toggleClass('highlight');
+	});
 		
 });
 

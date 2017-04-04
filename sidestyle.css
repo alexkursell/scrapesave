@@ -5,4 +5,19 @@
 #scrapesave-sidebar{
 	width:20%;
 	float: right;
+	padding:1px;
+	display: flex;
+	flex-direction: column;
+}
+
+#scrapesave-sidebar-fixed{
+	position:fixed;
+	padding: 2px;
+	border-left: 1px solid black;
+	box-sizing: border-box;
+	align-items: stretch;
+}
+
+.highlight{
+	background-color: yellow;
 }
