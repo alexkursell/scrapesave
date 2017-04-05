@@ -8,6 +8,12 @@ function NodeAttributes(nodeType, classes, id, index, orig) {
     this.originalObject = orig;
 }
 
+function PagePath(titlepath, bodypath, nextpath){
+	this.title = titlepath;
+	this.body = bodypath;
+	this.next = nextpath;
+}
+
 function parse(s){
 	s = JSON.parse(s);
 
@@ -53,7 +59,6 @@ function comapareNodeAtributes(o, n){
 	return ns / os;
 }
 
-
 function recurseWalk(prev, attrs, idx, confidence){
 	console.log("Level " + idx + " with a confidence of " + confidence * 100 + "%.");
 
@@ -86,11 +91,7 @@ function recurseWalk(prev, attrs, idx, confidence){
 
 
 	recurseWalk(children[children.length - 1].originalObject, attrs, idx + 1, confidence * children[children.length - 1].searchRank);
-
-
-
 }
-
 
 function getSelectorPath(e) {
     if ($(e).prop('tagName')) {
@@ -130,12 +131,12 @@ function getFindSelector(e) {
     }
 
     return new NodeAttributes(nodeType, classNames, id, idx, e);
-
 }
 
 path = null;
 
 console.log("hi");
+n = -1;
 
 /*jQuery.noConflict();
 $ = jQuery;*/
@@ -151,15 +152,35 @@ $(document).ready(function(){
 	$('body').append("<div id='scrapesave-sidebar'><div id='scrapesave-sidebar-fixed'</div></div>");
 	$("#scrapesave-sidebar-fixed").append(`<h3 style='text-align:center;width:inherit;'>ScrapeSave</h3>
 		<form id='chooseelement'>
-			<input type='radio' name='item' value='title'>Title</input>
-			<input type='radio' name='item' value='body'>Body</input>
-			<input type='radio' name='item' value='next'>Next Page Link</input>
+			<input type='radio' name='item' value='title'>Title</input><br>
+			<input type='radio' name='item' value='body'>Body</input><br>
+			<input type='radio' name='item' value='next'>Next Page Link</input><br>
+		</form>
+		<button id="up">UP</button>
+		<button id="deselect">DESELECT</button>`);
 
-		</form>`);
-
-	$('a').click(function(e){
+	$("#scrapesave-wrapper").click(function(e){
+		e.stopPropagation();
 		e.preventDefault();
-		$(e.target).toggleClass('highlight');
+		var sel = 'scrapesave-' + $("#chooseelement input[type='radio']:checked").val();
+
+		$('.' + sel).removeClass(sel);
+		$(e.target).addClass(sel);
+	});
+
+	$('#up').click(function(){
+		var sel = 'scrapesave-' + $("#chooseelement input[type='radio']:checked").val();
+		console.log(sel);
+		a = $('#scrapesave-wrapper .' + sel);
+		if($(a).parent().attr('id') != 'scrapesave-wrapper'){
+			$(a).parent().addClass(sel);
+		}
+		$(a).removeClass(sel);
+	});
+
+	$('#deselect').click(function(){
+		var sel = 'scrapesave-' + $("#chooseelement input[type='radio']:checked").val();
+		$('#scrapesave-wrapper .' + sel).removeClass(sel);
 	});
 		
 });

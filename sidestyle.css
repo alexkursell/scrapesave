@@ -18,6 +18,15 @@
 	align-items: stretch;
 }
 
-.highlight{
-	background-color: yellow;
+.scrapesave-title{
+	background-color: orange !important;
 }
+
+.scrapesave-body{
+	background-color: yellow !important;
+}
+
+.scrapesave-next{
+	background-color: green !important;
+}
+
