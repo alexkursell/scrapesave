@@ -20,13 +20,16 @@
 
 .scrapesave-title{
 	background-color: orange !important;
+	border: 1px solid black;
 }
 
 .scrapesave-body{
 	background-color: yellow !important;
+	border: 1px solid black;
 }
 
 .scrapesave-next{
 	background-color: green !important;
+	border: 1px solid black;
 }
 

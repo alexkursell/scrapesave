@@ -8,7 +8,7 @@ function NodeAttributes(nodeType, classes, id, index, orig) {
     this.originalObject = orig;
 }
 
-function PagePath(titlepath, bodypath, nextpath){
+function PagePaths(titlepath, bodypath, nextpath){
 	this.title = titlepath;
 	this.body = bodypath;
 	this.next = nextpath;
@@ -37,6 +37,9 @@ function comapareNodeAtributes(o, n){
 
 	//Compare classes
 	for(var i = 0; i < o.classes.length; i++){
+		if(o.classes[i].includes('scrapesave')){
+			continue;
+		}
 		os++;
 		if($.inArray(o.classes[i], n.classes) != -1){
 			ns++;
@@ -152,20 +155,35 @@ $(document).ready(function(){
 	$('body').append("<div id='scrapesave-sidebar'><div id='scrapesave-sidebar-fixed'</div></div>");
 	$("#scrapesave-sidebar-fixed").append(`<h3 style='text-align:center;width:inherit;'>ScrapeSave</h3>
 		<form id='chooseelement'>
-			<input type='radio' name='item' value='title'>Title</input><br>
+			<input type='radio' name='item' value='title' checked="checked">Title</input><br>
 			<input type='radio' name='item' value='body'>Body</input><br>
 			<input type='radio' name='item' value='next'>Next Page Link</input><br>
 		</form>
 		<button id="up">UP</button>
-		<button id="deselect">DESELECT</button>`);
+		<button id="deselect">DESELECT</button>
+		<button id="begin-scan">START</button>`);
 
 	$("#scrapesave-wrapper").click(function(e){
-		e.stopPropagation();
 		e.preventDefault();
+		e.stopPropagation();
+		a = e.target;
+		
+
+		console.log($(e.target).get(0).tagName);
+		
+
+		//Make sure that the selected 'next' is actually a link
+		if($("#chooseelement input[type='radio']:checked").val() == "next"){
+			while($(a).get(0).tagName.toLowerCase() != 'a'){
+				a = $(a).parent();
+			}
+		}
+		
+		
 		var sel = 'scrapesave-' + $("#chooseelement input[type='radio']:checked").val();
 
 		$('.' + sel).removeClass(sel);
-		$(e.target).addClass(sel);
+		$(a).addClass(sel);
 	});
 
 	$('#up').click(function(){
@@ -181,6 +199,20 @@ $(document).ready(function(){
 	$('#deselect').click(function(){
 		var sel = 'scrapesave-' + $("#chooseelement input[type='radio']:checked").val();
 		$('#scrapesave-wrapper .' + sel).removeClass(sel);
+	});
+
+	$('#begin-scan').click(function(){
+		scanPath = new PagePaths(
+			getSelectorPath($('.scrapesave-title')),
+			getSelectorPath($('.scrapesave-body')),
+			getSelectorPath($('.scrapesave-next'))
+			);
+
+		console.log(scanPath);
+
+		$.get($('.scra'))
+
+
 	});
 		
 });
