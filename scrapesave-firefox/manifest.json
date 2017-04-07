@@ -9,8 +9,22 @@
   "content_scripts": [
     {
       "matches": ["*://*.google.ca/*"],
-      "js": ["jquery-2.1.4.js", "content_script_test.js"]
+      "js": ["scripts/jquery-2.1.4.js", "scripts/content_script_test.js"]
     }
-  ]
+  ],
+
+  "icons": {
+    "20":"icons/alex-20x20.png"
+  },
+
+  "permissions": [
+    "activeTab"
+  ],
+
+  "browser_action": {
+    "default_icon": "icons/alex-20x20.png",
+    "default_title": "ScrapeSave",
+    "default_popup": "popup/test_popup.html"
+  }
 
 }
