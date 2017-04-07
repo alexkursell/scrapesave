@@ -1,0 +1,16 @@
+{
+
+  "manifest_version": 2,
+  "name": "ScrapeSave",
+  "version": "0.0.1",
+
+  "description": "Collate and save multi-page web content such as blogs, webcomics, serials and more.",
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.google.ca/*"],
+      "js": ["jquery-2.1.4.js", "content_script_test.js"]
+    }
+  ]
+
+}
