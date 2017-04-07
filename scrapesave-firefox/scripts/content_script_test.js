@@ -1,10 +1,4 @@
-
-jQuery.noConflict();
-console.log("Started");
-
-$ = jQuery;
-
-$(document).ready(function(){
+function onReady(){
 	console.log("Ready");
 
 $('a').click(function(e){
@@ -12,8 +6,11 @@ $('a').click(function(e){
 	e.preventDefault();
 	e.stopPropagation();
 });
+}
 
 
 
+jQuery.noConflict();
+$ = jQuery;
 
-});
+$(document).ready(onReady);

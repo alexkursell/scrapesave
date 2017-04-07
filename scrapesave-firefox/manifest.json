@@ -6,13 +6,6 @@
 
   "description": "Collate and save multi-page web content such as blogs, webcomics, serials and more.",
 
-  "content_scripts": [
-    {
-      "matches": ["*://*.google.ca/*"],
-      "js": ["scripts/jquery-2.1.4.js", "scripts/content_script_test.js"]
-    }
-  ],
-
   "icons": {
     "20":"icons/alex-20x20.png"
   },
