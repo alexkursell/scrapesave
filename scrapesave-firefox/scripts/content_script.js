@@ -130,20 +130,9 @@ function getFindSelector(e) {
     return new NodeAttributes(nodeType, classNames, id, idx, e);
 }
 
-
-
-/*jQuery.noConflict();
-$ = jQuery;*/
-
 $(document).ready(function(){
-	$("<link/>", {
-	   rel: "stylesheet",
-	   type: "text/css",
-	   href: "sidestyle.css"
-	}).appendTo("head");
-
-	$('body').wrapInner("<div id='scrapesave-wrapper'></div>");
-	$('body').append("<div id='scrapesave-sidebar'><div id='scrapesave-sidebar-fixed'</div></div>");
+	$('body').wrapInner("<div id='scrapesave-wrapper' style='width:80%;float:left;'></div>");
+	$('body').append("<iframe id='scrapesave-sidebar' src='sidebar.html' style='width:20%;float:right;'></iframe>");
 
 	$("#scrapesave-wrapper").click(function(e){
 		e.preventDefault();
@@ -162,14 +151,14 @@ $(document).ready(function(){
 		}
 		
 		
-		var sel = 'scrapesave-' + $("#chooseelement input[type='radio']:checked").val();
+		var sel = $("#chooseelement input[type='radio']:checked").val();
 
 		$('.' + sel).removeClass(sel);
 		$(a).addClass(sel);
 	});
 
-	$('#up').click(function(){
-		var sel = 'scrapesave-' + $("#chooseelement input[type='radio']:checked").val();
+	$('#scrapesave-sidebar').contents().find('#up').click(function(){
+		var sel = $("#chooseelement input[type='radio']:checked").val();
 		console.log(sel);
 		a = $('#scrapesave-wrapper .' + sel);
 		if($(a).parent().attr('id') != 'scrapesave-wrapper'){
@@ -178,12 +167,12 @@ $(document).ready(function(){
 		$(a).removeClass(sel);
 	});
 
-	$('#deselect').click(function(){
-		var sel = 'scrapesave-' + $("#chooseelement input[type='radio']:checked").val();
+	$('#scrapesave-sidebar').contents().find('#deselect').click(function(){
+		var sel = $$('#scrapesave-sidebar').contents().find("#chooseelement input[type='radio']:checked").val();
 		$('#scrapesave-wrapper .' + sel).removeClass(sel);
 	});
 
-	$('#begin-scan').click(function(){
+	$('#scrapesave-sidebar').contents().find('#begin-scan').click(function(){
 		scanPath = new PagePaths(
 			getSelectorPath($('.scrapesave-title')),
 			getSelectorPath($('.scrapesave-body')),
