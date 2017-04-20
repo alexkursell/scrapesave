@@ -5,7 +5,7 @@ $(document).ready(function(){
       		file: "/scripts/jquery-2.1.4.js" 
     	});
 		browser.tabs.executeScript(null, { 
-      		file: "/scripts/content_script_test.js" 
+      		file: "/scripts/content_script.js" 
     	});
 	});
 });

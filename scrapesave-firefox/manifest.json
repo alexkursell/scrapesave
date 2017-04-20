@@ -18,6 +18,11 @@
     "default_icon": "icons/alex-20x20.png",
     "default_title": "ScrapeSave",
     "default_popup": "popup/test_popup.html"
-  }
+  },
+
+  "web_accessible_resources": [
+    "scripts/sidebar.html",
+    "scripts/sidebar_style.html"
+  ]
 
 }

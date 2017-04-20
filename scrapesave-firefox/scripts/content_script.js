@@ -131,59 +131,26 @@ function getFindSelector(e) {
 }
 
 $(document).ready(function(){
+	var sidebarUrl = chrome.extension.getURL("scripts/sidebar.html");
+
 	$('body').wrapInner("<div id='scrapesave-wrapper' style='width:80%;float:left;'></div>");
-	$('body').append("<iframe id='scrapesave-sidebar' src='sidebar.html' style='width:20%;float:right;'></iframe>");
+	$('body').append("<iframe id='scrapesave-sidebar' scrolling='no' src='" + sidebarUrl + "' style='width:20%;float:right;overflow:hidden;height:100vh;position:fixed;'></iframe>");
 
 	$("#scrapesave-wrapper").click(function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		a = e.target;
 		
-
 		console.log($(e.target).get(0).tagName);
-		
-
-		//Make sure that the selected 'next' is actually a link
-		if($("#chooseelement input[type='radio']:checked").val() == "next"){
-			while($(a).get(0).tagName.toLowerCase() != 'a'){
-				a = $(a).parent();
-			}
-		}
-		
-		
-		var sel = $("#chooseelement input[type='radio']:checked").val();
-
-		$('.' + sel).removeClass(sel);
-		$(a).addClass(sel);
 	});
+	
+	console.log($("#scrapesave-sidebar"));
+	
+	$('#scrapesave-sidebar').on("load", function(){
+		var sideDOM = $("#scrapesave-sidebar").contents();
 
-	$('#scrapesave-sidebar').contents().find('#up').click(function(){
-		var sel = $("#chooseelement input[type='radio']:checked").val();
-		console.log(sel);
-		a = $('#scrapesave-wrapper .' + sel);
-		if($(a).parent().attr('id') != 'scrapesave-wrapper'){
-			$(a).parent().addClass(sel);
-		}
-		$(a).removeClass(sel);
+		sideDOM.find('#deselect').click(function(e){
+			console.log("CLICK");
+		});
 	});
-
-	$('#scrapesave-sidebar').contents().find('#deselect').click(function(){
-		var sel = $$('#scrapesave-sidebar').contents().find("#chooseelement input[type='radio']:checked").val();
-		$('#scrapesave-wrapper .' + sel).removeClass(sel);
-	});
-
-	$('#scrapesave-sidebar').contents().find('#begin-scan').click(function(){
-		scanPath = new PagePaths(
-			getSelectorPath($('.scrapesave-title')),
-			getSelectorPath($('.scrapesave-body')),
-			getSelectorPath($('.scrapesave-next'))
-			);
-
-		console.log(scanPath);
-
-		$.get($('.scra'))
-
-
-	});
-		
 });
