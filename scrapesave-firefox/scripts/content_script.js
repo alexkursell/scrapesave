@@ -132,25 +132,58 @@ function getFindSelector(e) {
 
 $(document).ready(function(){
 	var sidebarUrl = chrome.extension.getURL("scripts/sidebar.html");
+	var pageStyleUrl = chrome.extension.getURL("scripts/page_style.css");
+	
+	sideDOM = null;
 
-	$('body').wrapInner("<div id='scrapesave-wrapper' style='width:80%;float:left;'></div>");
-	$('body').append("<iframe id='scrapesave-sidebar' scrolling='no' src='" + sidebarUrl + "' style='width:20%;float:right;overflow:hidden;height:100vh;position:fixed;'></iframe>");
+	var loc = {
+		"title": null,
+		"body": null,
+		"next": null
+	}
 
+	//Add custom css styling
+	$("head").append("<style> .scrapesave-title {background-color: orange !important;border: 1px solid black;}.scrapesave-body {background-color: yellow !important;border: 1px solid black;}</style>");
+
+	//Wrap page and create sidebar
+	$('body').wrapInner("<div id='scrapesave-wrapper' style='width:80%;float:left;overflow:hidden!important;'></div>");
+	$('body').append("<iframe id='scrapesave-sidebar' scrolling='no' src='" + sidebarUrl + "' style='width:20%;float:right;overflow:hidden;height:100vh;position:fixed;z-index:99999999;'></iframe>");
+
+	//Prevent clicking links
 	$("#scrapesave-wrapper").click(function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		a = e.target;
+
+		var sel = sideDOM.find("#chooseelement input[type='radio']:checked").val();
+		console.log("HI " + sel);
+
+		$(e.target).addClass("scrapesave-" + sel);
+		//$(loc[sel]).removeClass("scrapesave-" + sel);
 		
-		console.log($(e.target).get(0).tagName);
+		
+		//loc[sel] = e.target;
 	});
 	
-	console.log($("#scrapesave-sidebar"));
-	
+
 	$('#scrapesave-sidebar').on("load", function(){
-		var sideDOM = $("#scrapesave-sidebar").contents();
+		sideDOM = $("#scrapesave-sidebar").contents();
+		var pageDOM = $("#scrapesave-wrapper").contents();
 
 		sideDOM.find('#deselect').click(function(e){
-			console.log("CLICK");
+			console.log("DESELECT");
+		});
+
+		sideDOM.find("#up").click(function(e){
+			console.log("UP");
+		});
+
+		sideDOM.find("#begin-scan").click(function(e){
+			console.log("SCAN");
+		})
+
+		sideDOM.find("#close").click(function(e){
+			$("#scrapesave-wrapper").replaceWith($("#scrapesave-wrapper").contents());
+			$("#scrapesave-sidebar").remove();
 		});
 	});
 });
