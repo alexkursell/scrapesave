@@ -65,18 +65,21 @@ function recurseWalk(prev, attrs, idx, confidence){
 		return;
 	}
 
-
-	var children = $(prev).children(attrs[idx].nodeType);
+	console.log("CHILD");
+	var children = prev.children(attrs[idx].nodeType);
+	console.log(children);
 
 	if (children.length < 1){
 		return null;
 	}
 
+	console.log("FINDING");
 	for(var i = 0; i < children.length; i++){
 		children[i] = new getFindSelector(children[i]);
 		children[i].searchRank = comapareNodeAtributes(attrs[idx], children[i]);
 	}
 
+	console.log("SORTING");
 	children.sort(function(a, b){
 		return a.searchRank - b.searchRank;
 	});
@@ -86,7 +89,7 @@ function recurseWalk(prev, attrs, idx, confidence){
 		return null;
 	}
 
-
+	console.log("RECURSING");
 	recurseWalk(children[children.length - 1].originalObject, attrs, idx + 1, confidence * children[children.length - 1].searchRank);
 }
 
@@ -95,7 +98,10 @@ function getSelectorPath(e) {
         //console.log(getFindSelector(e));
 
         var path = getSelectorPath($(e).parent());
-        path.push(getFindSelector(e));
+        if($(e).attr('id') != "scrapesave-wrapper"){
+        	path.push(getFindSelector(e));
+        }
+        
         return path;
     }
     return [];
@@ -130,6 +136,16 @@ function getFindSelector(e) {
     return new NodeAttributes(nodeType, classNames, id, idx, e);
 }
 
+function getSelectedBox(DOM){
+	return DOM.find("#chooseelement input[type='radio']:checked").val();
+}
+
+function scan(paths, url){
+	$.get(url, function(data){
+		recurseWalk($.parseHTML($.trim(data)), paths.title, 0, 1);
+	});	
+}
+
 $(document).ready(function(){
 	var sidebarUrl = chrome.extension.getURL("scripts/sidebar.html");
 	var pageStyleUrl = chrome.extension.getURL("scripts/page_style.css");
@@ -142,8 +158,9 @@ $(document).ready(function(){
 		"next": null
 	}
 
-	//Add custom css styling
-	$("head").append("<style> .scrapesave-title {background-color: orange !important;border: 1px solid black;}.scrapesave-body {background-color: yellow !important;border: 1px solid black;}</style>");
+	//Add custom css styling for highlighted sections
+	//I would just link a css file, but for some reason firefox dosen't apply the rules.
+	$("head").append("<style id='scrapesave-style'> .scrapesave-title {background-color: orange !important;border: 1px solid black;}.scrapesave-body {background-color: yellow !important;border: 1px solid black;}.scrapesave-next {background-color: green !important;border: 1px solid black;}</style>");
 
 	//Wrap page and create sidebar
 	$('body').wrapInner("<div id='scrapesave-wrapper' style='width:80%;float:left;overflow:hidden!important;'></div>");
@@ -154,14 +171,13 @@ $(document).ready(function(){
 		e.preventDefault();
 		e.stopPropagation();
 
-		var sel = sideDOM.find("#chooseelement input[type='radio']:checked").val();
-		console.log("HI " + sel);
+		var sel = getSelectedBox(sideDOM);
 
 		$(e.target).addClass("scrapesave-" + sel);
-		//$(loc[sel]).removeClass("scrapesave-" + sel);
+		$(loc[sel]).removeClass("scrapesave-" + sel);
 		
 		
-		//loc[sel] = e.target;
+		loc[sel] = e.target;
 	});
 	
 
@@ -170,20 +186,46 @@ $(document).ready(function(){
 		var pageDOM = $("#scrapesave-wrapper").contents();
 
 		sideDOM.find('#deselect').click(function(e){
-			console.log("DESELECT");
+			
+			var sel = getSelectedBox(sideDOM);
+			$(loc[sel]).removeClass("scrapesave-" + sel);
+			loc[sel] = null;
 		});
 
 		sideDOM.find("#up").click(function(e){
-			console.log("UP");
+			
+			var sel = getSelectedBox(sideDOM);
+			var parent = $(loc[sel]).parent();
+
+			$(loc[sel]).removeClass("scrapesave-" + sel);
+			
+			if($(parent).attr('id') == "scrapesave-wrapper"){
+				loc[sel] = null;
+			}
+			else{
+				$(parent).addClass("scrapesave-" + sel);
+				loc[sel] = parent;
+			}
 		});
 
 		sideDOM.find("#begin-scan").click(function(e){
 			console.log("SCAN");
+
+			var paths = [];
+			for(var i in loc){
+				paths.push(getSelectorPath(loc[i]));
+			}
+			
+			scan(new PagePaths(paths[0], paths[1], paths[2]), window.location.href);
 		})
 
 		sideDOM.find("#close").click(function(e){
 			$("#scrapesave-wrapper").replaceWith($("#scrapesave-wrapper").contents());
+			$("#scrapesave-style").remove();
 			$("#scrapesave-sidebar").remove();
+			for(var i in loc){
+				$(loc[i]).removeClass("scrapesave-" + i);
+			}
 		});
 	});
 });
