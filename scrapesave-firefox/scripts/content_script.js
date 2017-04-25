@@ -61,25 +61,20 @@ function recurseWalk(prev, attrs, idx, confidence){
 
 	if (idx == attrs.length){
 		console.log("Reached bottom.");
-		console.log($(prev).text());
-		return;
+		return prev;
 	}
 
-	console.log("CHILD");
-	var children = prev.children(attrs[idx].nodeType);
-	console.log(children);
+	var children = $(prev).children(attrs[idx].nodeType);
 
 	if (children.length < 1){
 		return null;
 	}
 
-	console.log("FINDING");
 	for(var i = 0; i < children.length; i++){
 		children[i] = new getFindSelector(children[i]);
 		children[i].searchRank = comapareNodeAtributes(attrs[idx], children[i]);
 	}
 
-	console.log("SORTING");
 	children.sort(function(a, b){
 		return a.searchRank - b.searchRank;
 	});
@@ -89,8 +84,7 @@ function recurseWalk(prev, attrs, idx, confidence){
 		return null;
 	}
 
-	console.log("RECURSING");
-	recurseWalk(children[children.length - 1].originalObject, attrs, idx + 1, confidence * children[children.length - 1].searchRank);
+	return recurseWalk(children[children.length - 1].originalObject, attrs, idx + 1, confidence * children[children.length - 1].searchRank);
 }
 
 function getSelectorPath(e) {
@@ -141,8 +135,19 @@ function getSelectedBox(DOM){
 }
 
 function scan(paths, url){
+	console.log("\n\n\n\n")
+	console.log(url);
+	var title, body, next;
+	parser = new DOMParser();
+	
 	$.get(url, function(data){
-		recurseWalk($.parseHTML($.trim(data)), paths.title, 0, 1);
+		data = $(parser.parseFromString(data, "text/html"))
+		title = recurseWalk(data, paths.title, 0, 1);
+		body = recurseWalk(data, paths.body, 0, 1);
+		next = recurseWalk(data, paths.next, 0, 1);
+
+		console.log($(title).text());
+		scan(paths, $(next).attr("href"));
 	});	
 }
 
@@ -169,9 +174,14 @@ $(document).ready(function(){
 	//Prevent clicking links
 	$("#scrapesave-wrapper").click(function(e){
 		e.preventDefault();
-		e.stopPropagation();
-
+		
 		var sel = getSelectedBox(sideDOM);
+
+		if(sel == "next" && e.target.tagName.toLowerCase() != "a"){
+			return;
+		}
+
+		e.stopPropagation();
 
 		$(e.target).addClass("scrapesave-" + sel);
 		$(loc[sel]).removeClass("scrapesave-" + sel);
@@ -209,14 +219,13 @@ $(document).ready(function(){
 		});
 
 		sideDOM.find("#begin-scan").click(function(e){
-			console.log("SCAN");
 
 			var paths = [];
 			for(var i in loc){
 				paths.push(getSelectorPath(loc[i]));
 			}
 			
-			scan(new PagePaths(paths[0], paths[1], paths[2]), window.location.href);
+			scan(new PagePaths(paths[0], paths[1], paths[2]), $(loc["next"]).attr("href"));
 		})
 
 		sideDOM.find("#close").click(function(e){
