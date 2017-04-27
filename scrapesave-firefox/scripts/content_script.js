@@ -135,28 +135,36 @@ function getSelectedBox(DOM){
 }
 
 function scan(paths, url){
-	console.log("\n\n\n\n")
+	sideDOM = $("#scrapesave-sidebar").contents();
 	console.log(url);
+	
 	var title, body, next;
 	parser = new DOMParser();
 	
 	$.get(url, function(data){
-		data = $(parser.parseFromString(data, "text/html"))
+		data = $(parser.parseFromString(data, "text/html"));
 		title = recurseWalk(data, paths.title, 0, 1);
 		body = recurseWalk(data, paths.body, 0, 1);
 		next = recurseWalk(data, paths.next, 0, 1);
+		
 
-		console.log($(title).text());
+
+
+		console.log("DONE");
+		
+		sideDOM.find("#table-found").append("<tr><td>" + $(title).text() + "</tr></td>");
 		scan(paths, $(next).attr("href"));
+	
+	}).fail(function(){
+		console.log("FUCK");
 	});	
 }
 
+sideDOM = null;
 $(document).ready(function(){
 	var sidebarUrl = chrome.extension.getURL("scripts/sidebar.html");
 	var pageStyleUrl = chrome.extension.getURL("scripts/page_style.css");
 	
-	sideDOM = null;
-
 	var loc = {
 		"title": null,
 		"body": null,
@@ -168,8 +176,8 @@ $(document).ready(function(){
 	$("head").append("<style id='scrapesave-style'> .scrapesave-title {background-color: orange !important;border: 1px solid black;}.scrapesave-body {background-color: yellow !important;border: 1px solid black;}.scrapesave-next {background-color: green !important;border: 1px solid black;}</style>");
 
 	//Wrap page and create sidebar
-	$('body').wrapInner("<div id='scrapesave-wrapper' style='width:80%;float:left;overflow:hidden!important;'></div>");
-	$('body').append("<iframe id='scrapesave-sidebar' scrolling='no' src='" + sidebarUrl + "' style='width:20%;float:right;overflow:hidden;height:100vh;position:fixed;z-index:99999999;'></iframe>");
+	$('body').wrapInner("<div id='scrapesave-wrapper'></div>");
+	$('body').append("<iframe id='scrapesave-sidebar' scrolling='no' src='" + sidebarUrl + "' style='position:fixed;z-index:99999999;bottom:0;right:0;height:50%;'></iframe>");
 
 	//Prevent clicking links
 	$("#scrapesave-wrapper").click(function(e){
@@ -194,6 +202,13 @@ $(document).ready(function(){
 	$('#scrapesave-sidebar').on("load", function(){
 		sideDOM = $("#scrapesave-sidebar").contents();
 		var pageDOM = $("#scrapesave-wrapper").contents();
+
+		sideDOM.find("#tabbar button").click(function(e){
+			var sel = "#tab-" + $(e.target).attr("id").replace("button-", "");
+
+			sideDOM.find(".activeTab").removeClass("activeTab");
+			sideDOM.find(sel).addClass("activeTab");
+		});
 
 		sideDOM.find('#deselect').click(function(e){
 			

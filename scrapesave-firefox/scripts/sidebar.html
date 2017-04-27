@@ -1,15 +1,39 @@
 <head>
   <link rel="stylesheet" href="sidebar_style.css">
 </head>
+
 <body>
   <h3>ScrapeSave</h3>
+  <div id="tabbar">
+    <button class="tabbutton" id="button-linkpage">List of Pages</button>
+    <button class="tabbutton" id="button-onpage">Select Elements</button>
+    <button class="tabbutton" id="button-found">Pages Found</button>
+  </div>
+
+  <div id="tab-linkpage" class="tab">
+  </div>
+  <div id="tab-onpage" class="tab">
     <form id='chooseelement'>
       <input type='radio' name='item' value='title' checked="checked">Title</input><br>
       <input type='radio' name='item' value='body'>Body</input><br>
       <input type='radio' name='item' value='next'>Next Page Link</input><br>
     </form>
+  </div>
+
+  <div id="tab-found" class="tab">
+    <table id="table-found">
+      <tr>
+        <td>HI</td>
+      </tr>
+    </table>
+  </div>
+
+
+  <div id="control-panel">
     <button id="up">UP</button>
     <button id="deselect">DESELECT</button>
-    <button id="begin-scan">START</button>
+    <button id="begin-scan">SCAN</button>
     <button id="close">CLOSE</button>
+  </div>
+  
 </body>

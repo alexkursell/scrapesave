@@ -1,9 +1,33 @@
 body {
 	background-color: red;
 	height: 100%;
+	display:flex;
+	flex-direction: column;
 }
 
 h3 {
   text-align:center;
   width: inherit;
  }
+
+ .tab{
+ 	display:none;
+ 	overflow-y:auto;
+	overflow-x: hidden;
+ }
+
+ .activetab{
+ 	flex-grow: 1;
+ 	display: block;
+ }
+
+ #control-panel{
+ 	display: flex;
+ 	width:inherit;
+ 	flex-direction: row;
+ }
+
+ #control-panel button{
+ 	flex-grow: 1;
+ }
+

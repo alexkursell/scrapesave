@@ -60,6 +60,10 @@ table td{
 	word-wrap: break-word;
 }
 
+table tr{
+	height:15px;
+}
+
 .scrollable{
 	overflow-y:auto;
 	overflow-x: hidden;
@@ -77,6 +81,7 @@ table td{
 .inside{
 	width:95%;
 	margin:0 auto;
+	height:100%;
 }
 
 .roundbox{
