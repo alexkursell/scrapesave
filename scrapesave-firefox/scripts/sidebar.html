@@ -8,32 +8,44 @@
     <button class="tabbutton" id="button-linkpage">List of Pages</button>
     <button class="tabbutton" id="button-onpage">Select Elements</button>
     <button class="tabbutton" id="button-found">Pages Found</button>
+    <button class="tabbutton" id="button-help">Help</button>
   </div>
+
 
   <div id="tab-linkpage" class="tab">
+    <input type='radio' name='item' value='links' checked="checked">Links</input><br>
   </div>
-  <div id="tab-onpage" class="tab">
-    <form id='chooseelement'>
-      <input type='radio' name='item' value='title' checked="checked">Title</input><br>
-      <input type='radio' name='item' value='body'>Body</input><br>
-      <input type='radio' name='item' value='next'>Next Page Link</input><br>
-    </form>
-  </div>
-
-  <div id="tab-found" class="tab">
-    <table id="table-found">
-      <tr>
-        <td>HI</td>
-      </tr>
-    </table>
-  </div>
+  <div id="tab-onpage" class="tab activeTab">
+   <form id='chooseelement'>
+    <input type='radio' name='item' value='title' checked="checked">Title</input><br>
+    <input type='radio' name='item' value='body'>Body</input><br>
+    <input type='radio' name='item' value='next'>Next Page Link</input><br>
+  </form>
+</div>
 
 
-  <div id="control-panel">
-    <button id="up">UP</button>
-    <button id="deselect">DESELECT</button>
-    <button id="begin-scan">SCAN</button>
-    <button id="close">CLOSE</button>
-  </div>
-  
+<div id="tab-found" class="tab">
+  <table id="table-found">
+    <tr>
+      <td>HI</td>
+    </tr>
+  </table>
+</div>
+
+<div id="tab-help" class="tab">
+  <h5>Recommended</h5>
+  <p> Select "List of Pages" on a page containing a list of all the pages you want in order. Then select '???', switch to "Select Elements" and select the title and body of a single one of those pages. Press "START".
+
+  <h5>If a list of all pages is unavailable</h5>
+  <p>TEST</p>
+</div>
+
+
+<div id="control-panel">
+  <button id="up">UP</button>
+  <button id="deselect">DESELECT</button>
+  <button id="begin-scan">SCAN</button>
+  <button id="close">CLOSE</button>
+</div>
+
 </body>
