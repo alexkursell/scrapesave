@@ -13,13 +13,18 @@
 
 
   <div id="tab-linkpage" class="tab">
-    <input type='radio' name='item' value='links' checked="checked">Links</input><br>
+    <table id="links-found">
+      <tr>
+        <td>WHOA</td>
+      </tr>
+    </table>
   </div>
   <div id="tab-onpage" class="tab activeTab">
    <form id='chooseelement'>
     <input type='radio' name='item' value='title' checked="checked">Title</input><br>
     <input type='radio' name='item' value='body'>Body</input><br>
     <input type='radio' name='item' value='next'>Next Page Link</input><br>
+    <input type='radio' name='item' value='pageslist'>List of Pages</input><br>
   </form>
 </div>
 
@@ -42,9 +47,10 @@
 
 
 <div id="control-panel">
+  <button id="begin-scan">Scan With Next Links</button>
+  <button id="pages-scan">Scan with Page Lists</button>
   <button id="up">UP</button>
   <button id="deselect">DESELECT</button>
-  <button id="begin-scan">SCAN</button>
   <button id="close">CLOSE</button>
 </div>
 

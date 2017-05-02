@@ -134,6 +134,17 @@ function getSelectedBox(DOM){
 	return DOM.find("#chooseelement input[type='radio']:checked").val();
 }
 
+function extractURLList(thisDOM){
+	var links = [];
+	$(thisDOM).find("a").each(function(index){
+		if($(this).attr('href')){
+			links.push($(this).attr('href'));
+		}
+	});
+
+	return links;
+}
+
 function scan(paths, url){
 	sideDOM = $("#scrapesave-sidebar").contents();
 	console.log(url);
@@ -169,12 +180,13 @@ $(document).ready(function(){
 	var loc = {
 		"title": null,
 		"body": null,
-		"next": null
+		"next": null,
+		"pageslist": null
 	}
 
 	//Add custom css styling for highlighted sections
 	//I would just link a css file, but for some reason firefox dosen't apply the rules.
-	$("head").append("<style id='scrapesave-style'> .scrapesave-title {background-color: orange !important;border: 1px solid black;}.scrapesave-body {background-color: yellow !important;border: 1px solid black;}.scrapesave-next {background-color: green !important;border: 1px solid black;}</style>");
+	$("head").append("<style id='scrapesave-style'> .scrapesave-pageslist {background-color: pink !important;border: 1px solid black;}.scrapesave-title {background-color: orange !important;border: 1px solid black;}.scrapesave-body {background-color: yellow !important;border: 1px solid black;}.scrapesave-next {background-color: green !important;border: 1px solid black;}</style>");
 
 	//Wrap page and create sidebar
 	$('body').wrapInner("<div id='scrapesave-wrapper'></div>");
@@ -205,10 +217,13 @@ $(document).ready(function(){
 		var pageDOM = $("#scrapesave-wrapper").contents();
 
 		sideDOM.find("#tabbar button").click(function(e){
-			var sel = "#tab-" + $(e.target).attr("id").replace("button-", "");
+			var sel = $(e.target).attr("id").replace("button-", "");
+
+			sel = "#tab-" + sel;
 
 			sideDOM.find(".activeTab").removeClass("activeTab");
 			sideDOM.find(sel).addClass("activeTab");
+
 		});
 
 		sideDOM.find('#deselect').click(function(e){
@@ -243,6 +258,16 @@ $(document).ready(function(){
 			
 			scan(new PagePaths(paths[0], paths[1], paths[2]), $(loc["next"]).attr("href"));
 		})
+
+		sideDOM.find("#pages-scan").click(function(e){
+			console.log("CLICK");
+			console.log(loc["pageslist"]);
+			var urls = extractURLList($(loc["pageslist"]));
+			console.log(urls);
+			for(var i = 0; i < urls.length; i++){
+				sideDOM.find("#links-found").append("<tr><td>" + urls[i] + "</tr></td>");
+			}
+		});
 
 		sideDOM.find("#close").click(function(e){
 			$("#scrapesave-wrapper").replaceWith($("#scrapesave-wrapper").contents());

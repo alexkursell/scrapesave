@@ -35,10 +35,12 @@ form {
 	width:inherit;
 	flex-direction: row;
 	padding-bottom: 10px;
+	flex-wrap: wrap;
 }
 
 #control-panel button{
 	flex-grow: 1;
+	
 }
 
 #tabbar {
@@ -50,5 +52,21 @@ form {
 #tabbar button{
 	width: 20%;
 	flex-grow: 1;
+}
+
+#begin-scan{
+	width:50%;
+}
+#pages-scan{
+	width:50%;
+}
+#close{
+	width:33%;
+}
+#deselect{
+	width:33%;
+}
+#up{
+	width:33%;
 }
 
