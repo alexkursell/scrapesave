@@ -57,10 +57,10 @@ function comapareNodeAtributes(o, n){
 }
 
 function recurseWalk(prev, attrs, idx, confidence){
-	console.log("Level " + idx + " with a confidence of " + confidence * 100 + "%.");
+	//console.log("Level " + idx + " with a confidence of " + confidence * 100 + "%.");
 
 	if (idx == attrs.length){
-		console.log("Reached bottom.");
+		//console.log("Reached bottom.");
 		return prev;
 	}
 
@@ -138,41 +138,60 @@ function extractURLList(thisDOM){
 	var links = [];
 	$(thisDOM).find("a").each(function(index){
 		if($(this).attr('href')){
-			links.push($(this).attr('href'));
+			links.push({"url": $(this).attr('href')});
 		}
 	});
 
 	return links;
 }
 
-function scan(paths, url){
-	sideDOM = $("#scrapesave-sidebar").contents();
-	console.log(url);
-	
+function scan(paths, list){
 	var title, body, next;
 	parser = new DOMParser();
-	
-	$.get(url, function(data){
-		data = $(parser.parseFromString(data, "text/html"));
-		title = recurseWalk(data, paths.title, 0, 1);
-		body = recurseWalk(data, paths.body, 0, 1);
-		next = recurseWalk(data, paths.next, 0, 1);
-		
+
+	for(var idx = 0; idx < list.length; idx++){
+		$.get(list[idx].url, function(data){
+			data = $(parser.parseFromString(data, "text/html"));
+			
+			title = $(recurseWalk(data, paths.title, 0, 1)).text();
+			body = recurseWalk(data, paths.body, 0, 1);
+			next = recurseWalk(data, paths.next, 0, 1);
+			console.log(title);
+			console.log(body);
+			console.log(next);
+			list[idx] = {"title":title, "body":body, "next":next, "url":list[idx].url};
+			console.log("DONE");
+			console.log(urls);
+			console.log(list);
+			updateTable(idx, list);
 
 
+		}).fail(function(){
+			console.log("Scan failed for URL(s): " + url);
+		});	
+	}
+	console.log(list);
+}
 
-		console.log("DONE");
-		
-		sideDOM.find("#table-found").append("<tr><td>" + $(title).text() + "</tr></td>");
-		
-		scan(paths, $(next).attr("href"));
-	
-	}).fail(function(){
-		console.log("FUCK");
-	});	
+function updateTable(idx, list){
+	console.log(list[idx]);
+	var text;
+	if(list[idx].title){
+		text = $(list[idx].title).text();
+	}
+	else{
+		text = list[idx].url;
+	}
+
+	while($(sideDOM).find("#table-found tr").length < idx + 1){
+		$(sideDOM).find("#table-found tr").append("<tr><td></tr></td>");
+	}
+
+	sideDOM.find("#table-found tr").eq(idx).html("<tr><td>" + text + "</tr></td>");
 }
 
 sideDOM = null;
+urls = [];
 $(document).ready(function(){
 	var sidebarUrl = chrome.extension.getURL("scripts/sidebar.html");
 	var pageStyleUrl = chrome.extension.getURL("scripts/page_style.css");
@@ -250,22 +269,18 @@ $(document).ready(function(){
 		});
 
 		sideDOM.find("#begin-scan").click(function(e){
-
 			var paths = [];
 			for(var i in loc){
 				paths.push(getSelectorPath(loc[i]));
 			}
 			
-			scan(new PagePaths(paths[0], paths[1], paths[2]), $(loc["next"]).attr("href"));
+			scan(new PagePaths(paths[0], paths[1], paths[2]), urls);
 		})
 
 		sideDOM.find("#pages-scan").click(function(e){
-			console.log("CLICK");
-			console.log(loc["pageslist"]);
-			var urls = extractURLList($(loc["pageslist"]));
-			console.log(urls);
+			urls = extractURLList($(loc["pageslist"]));
 			for(var i = 0; i < urls.length; i++){
-				sideDOM.find("#links-found").append("<tr><td>" + urls[i] + "</tr></td>");
+				sideDOM.find("#table-found").append("<tr><td>" + urls[i].url + "</tr></td>");
 			}
 		});
 
