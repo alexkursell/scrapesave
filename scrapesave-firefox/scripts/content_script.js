@@ -150,44 +150,42 @@ function scan(paths, list){
 	parser = new DOMParser();
 
 	for(var idx = 0; idx < list.length; idx++){
-		$.get(list[idx].url, function(data){
+		console.log(idx + " idx");
+		$.get(list[idx].url, function(idx){return function(data){
 			data = $(parser.parseFromString(data, "text/html"));
 			
 			title = $(recurseWalk(data, paths.title, 0, 1)).text();
 			body = recurseWalk(data, paths.body, 0, 1);
 			next = recurseWalk(data, paths.next, 0, 1);
-			console.log(title);
-			console.log(body);
-			console.log(next);
+			
 			list[idx] = {"title":title, "body":body, "next":next, "url":list[idx].url};
-			console.log("DONE");
-			console.log(urls);
-			console.log(list);
 			updateTable(idx, list);
 
 
-		}).fail(function(){
+		}}(idx)).fail(function(){
 			console.log("Scan failed for URL(s): " + url);
 		});	
 	}
-	console.log(list);
 }
 
 function updateTable(idx, list){
-	console.log(list[idx]);
+	console.log(idx, list[idx]);
 	var text;
+	
 	if(list[idx].title){
-		text = $(list[idx].title).text();
+		text = list[idx].title;
 	}
 	else{
 		text = list[idx].url;
 	}
 
+	console.log(text);
 	while($(sideDOM).find("#table-found tr").length < idx + 1){
-		$(sideDOM).find("#table-found tr").append("<tr><td></tr></td>");
+		console.log("ADDING");
+		$(sideDOM).find("#table-found").append("<tr><td></tr></td>");
 	}
 
-	sideDOM.find("#table-found tr").eq(idx).html("<tr><td>" + text + "</tr></td>");
+	sideDOM.find("#table-found tr").eq(idx).html("<td>" + text + "</td>");
 }
 
 sideDOM = null;
@@ -278,7 +276,12 @@ $(document).ready(function(){
 		})
 
 		sideDOM.find("#pages-scan").click(function(e){
+			sideDOM.find("#table-found").empty();
+			
+			console.log(loc["pageslist"])
 			urls = extractURLList($(loc["pageslist"]));
+			console.log(urls);
+			
 			for(var i = 0; i < urls.length; i++){
 				sideDOM.find("#table-found").append("<tr><td>" + urls[i].url + "</tr></td>");
 			}
