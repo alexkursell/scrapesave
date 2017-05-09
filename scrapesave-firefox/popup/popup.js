@@ -4,6 +4,9 @@ $(document).ready(function(){
 		browser.tabs.executeScript(null, { 
       		file: "/scripts/jquery-2.1.4.js" 
     	});
+    	browser.tabs.executeScript(null, { 
+      		file: "/scripts/FileSaver.min.js" 
+    	});
 		browser.tabs.executeScript(null, { 
       		file: "/scripts/content_script.js" 
     	});

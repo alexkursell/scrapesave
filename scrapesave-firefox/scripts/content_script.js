@@ -295,5 +295,10 @@ $(document).ready(function(){
 				$(loc[i]).removeClass("scrapesave-" + i);
 			}
 		});
+
+		sideDOM.find("#save").click(function(e){
+			var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
+			saveAs(blob, "hello world.txt");
+		});
 	});
 });
