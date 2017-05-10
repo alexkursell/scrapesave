@@ -294,11 +294,27 @@ $(document).ready(function(){
 			for(var i in loc){
 				$(loc[i]).removeClass("scrapesave-" + i);
 			}
+			history.go(0);
 		});
 
 		sideDOM.find("#save").click(function(e){
-			var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
-			saveAs(blob, "hello world.txt");
+			var a = [];
+			console.log(urls);
+			for(var idx = 0; idx < urls.length; idx++){
+				var page = urls[idx];
+				var title = '<h1 class="chapter">' + page.title + '</h1>';
+				var body = $(page.body).html();
+				a.push(title + "<br>" + body);
+			}
+			console.log(a);
+			var blob = new Blob(a, {type: "text/html;charset=utf-8"});
+			saveAs(blob, "hello world.html");
+		});
+
+		sideDOM.on('click', "#table-found tr", function(e){
+			console.log("CLICK");
+			sideDOM.find("#table-found tr.highlight").removeClass("highlight");
+			sideDOM.find(e.target).closest("tr").addClass('highlight');
 		});
 	});
 });
