@@ -1,47 +1,49 @@
 <head>
   <link rel="stylesheet" href="sidebar_style.css">
 </head>
-
 <body>
   <h3>ScrapeSave</h3>
-  <div id="tabbar">
+  
+  <div id="tabbar" class="button-panel">
     <button class="tabbutton" id="button-onpage">Select Elements</button>
     <button class="tabbutton" id="button-found">Pages Found</button>
     <button class="tabbutton" id="button-help">Help</button>
   </div>
-
-
+  
   <div id="tab-onpage" class="tab activeTab">
-   <form id='chooseelement'>
-    <input type='radio' name='item' value='title' checked="checked">Title</input><br>
-    <input type='radio' name='item' value='body'>Body</input><br>
-    <input type='radio' name='item' value='next'>Next Page Link</input><br>
-    <input type='radio' name='item' value='pageslist'>List of Pages</input><br>
-  </form>
-</div>
+    <form id='chooseelement'>
+      <label><input type='radio' name='item' value='title' checked="checked">Title</input></label><br>
+      <label><input type='radio' name='item' value='body'>Body</input></label><br>
+      <label><input type='radio' name='item' value='next'>Next Page Link</input></label><br>
+      <label><input type='radio' name='item' value='pageslist'>List of Pages</input></label><br>
+    </form>
+    <div id="onpage-panel" class="button-panel">
+      <button id="up">Select Up</button>
+      <button id="deselect">Deselect Item</button>
+    </div>
+  </div>
+  
+  <div id="tab-found" class="tab">
+    <table id="table-found">
 
+    </table>
+    
+    <div class="button-panel">
+      <button id="pages-scan">Load Links</button>
+      <button id="begin-scan">Begin Scan</button>
+    </div>
+  </div>
+  
+  <div id="tab-help" class="tab">
+    <h1>Usage</h1>
+    <p> Select "List of Pages" on a page containing a list of all the pages you want in order. Then select '???', switch to "Select Elements" and select the title and body of a single one of those pages. Press "START".s</p>
+  
+  </div>
+    
 
-<div id="tab-found" class="tab">
-  <table id="table-found">
-  </table>
-</div>
-
-<div id="tab-help" class="tab">
-  <h5>Recommended</h5>
-  <p> Select "List of Pages" on a page containing a list of all the pages you want in order. Then select '???', switch to "Select Elements" and select the title and body of a single one of those pages. Press "START".
-
-  <h5>If a list of all pages is unavailable</h5>
-  <p>TEST</p>
-</div>
-
-
-<div id="control-panel">
-  <button id="begin-scan">Begin Scan</button>
-  <button id="pages-scan">Pages Scan</button>
-  <button id="up">UP</button>
-  <button id="deselect">DESELECT</button>
-  <button id="save">SAVE</button>
-  <button id="close">CLOSE</button>
-</div>
-
-</body>
+  <div class="button-panel" id="global-options">
+    <button id="save">Save</button>
+    <button id="close">Quit</button>
+  </div>
+  
+  </body>

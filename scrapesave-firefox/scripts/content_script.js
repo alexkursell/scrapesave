@@ -207,7 +207,7 @@ $(document).ready(function(){
 
 	//Wrap page and create sidebar
 	$('body').wrapInner("<div id='scrapesave-wrapper'></div>");
-	$('body').append("<iframe id='scrapesave-sidebar' scrolling='no' src='" + sidebarUrl + "' style='position:fixed;z-index:99999999;bottom:0;right:0;height:50vh;'></iframe>");
+	$('body').append("<iframe id='scrapesave-sidebar' scrolling='no' src='" + sidebarUrl + "' style='position:fixed;z-index:99999999;bottom:0;right:0;height:66vh;width:33vw'></iframe>");
 
 	//Prevent clicking links
 	$("#scrapesave-wrapper").click(function(e){
