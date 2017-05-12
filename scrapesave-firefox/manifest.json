@@ -23,7 +23,8 @@
   "web_accessible_resources": [
     "scripts/sidebar.html",
     "scripts/sidebar_style.html",
-    "scripts/page_style.html"
+    "scripts/page_style.html",
+    "icons/open-iconic/svg/*.svg"
   ]
 
 }

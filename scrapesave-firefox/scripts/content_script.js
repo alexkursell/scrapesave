@@ -13,18 +13,6 @@ function PagePaths(titlepath, bodypath, nextpath){
 	this.next = nextpath;
 }
 
-function parse(s){
-	s = JSON.parse(s);
-
-	for (i = 0; i < s.length; i++){
-		var a = s[i];
-
-		s[i] = new NodeAttributes(a[0], a[1], a[2], a[3], null);
-	}
-
-	return s;
-}
-
 function comapareNodeAtributes(o, n){
 	var os = 0;
 	var ns = 0;
@@ -80,7 +68,7 @@ function recurseWalk(prev, attrs, idx, confidence){
 	});
 
 	if (children[children.length - 1].searchRank == 0){
-		console.log("Failed");
+		//console.log("Failed");
 		return null;
 	}
 
@@ -185,15 +173,22 @@ function updateTable(idx, list){
 		$(sideDOM).find("#table-found").append("<tr><td></tr></td>");
 	}
 
-	sideDOM.find("#table-found tr").eq(idx).html("<td>" + text + "</td>");
+	sideDOM.find("#table-found tr").eq(idx).html("<td>" + text + "</td><td class='x-button'><img src='" +
+		chrome.extension.getURL("icons/open-iconic/svg/x.svg") +"'></td>");
 }
 
+
+//Important global variables
 sideDOM = null;
-urls = [];
+pages = [];
+
+
 $(document).ready(function(){
 	var sidebarUrl = chrome.extension.getURL("scripts/sidebar.html");
 	var pageStyleUrl = chrome.extension.getURL("scripts/page_style.css");
 	
+
+	//Locations of the currently selected nodes
 	var loc = {
 		"title": null,
 		"body": null,
@@ -202,7 +197,7 @@ $(document).ready(function(){
 	}
 
 	//Add custom css styling for highlighted sections
-	//I would just link a css file, but for some reason firefox dosen't apply the rules.
+	//I would just link a css file, but for some reason firefox dosen't apply it.
 	$("head").append("<style id='scrapesave-style'> .scrapesave-pageslist {background-color: pink !important;border: 1px solid black;}.scrapesave-title {background-color: orange !important;border: 1px solid black;}.scrapesave-body {background-color: yellow !important;border: 1px solid black;}.scrapesave-next {background-color: green !important;border: 1px solid black;}</style>");
 
 	//Wrap page and create sidebar
@@ -229,10 +224,13 @@ $(document).ready(function(){
 	});
 	
 
+	//All of the event handlers for the actual sidebar
 	$('#scrapesave-sidebar').on("load", function(){
+		
+		//The DOM for the sidebar
 		sideDOM = $("#scrapesave-sidebar").contents();
-		var pageDOM = $("#scrapesave-wrapper").contents();
 
+		//Implement tab switching
 		sideDOM.find("#tabbar button").click(function(e){
 			var sel = $(e.target).attr("id").replace("button-", "");
 
@@ -243,6 +241,7 @@ $(document).ready(function(){
 
 		});
 
+		//Deselect currently selected attribute
 		sideDOM.find('#deselect').click(function(e){
 			
 			var sel = getSelectedBox(sideDOM);
@@ -250,8 +249,8 @@ $(document).ready(function(){
 			loc[sel] = null;
 		});
 
+		//Go to the parent DOM node of the currently selected attribute
 		sideDOM.find("#up").click(function(e){
-			
 			var sel = getSelectedBox(sideDOM);
 			var parent = $(loc[sel]).parent();
 
@@ -266,55 +265,59 @@ $(document).ready(function(){
 			}
 		});
 
+
+		//Get all HTML files in the table
 		sideDOM.find("#begin-scan").click(function(e){
 			var paths = [];
 			for(var i in loc){
 				paths.push(getSelectorPath(loc[i]));
 			}
 			
-			scan(new PagePaths(paths[0], paths[1], paths[2]), urls);
+			scan(new PagePaths(paths[0], paths[1], paths[2]), pages);
 		})
 
+
+		//Gets all specified links, adds them to the table
 		sideDOM.find("#pages-scan").click(function(e){
 			sideDOM.find("#table-found").empty();
 			
-			console.log(loc["pageslist"])
-			urls = extractURLList($(loc["pageslist"]));
-			console.log(urls);
+			pages = extractURLList($(loc["pageslist"]));
 			
-			for(var i = 0; i < urls.length; i++){
-				sideDOM.find("#table-found").append("<tr><td>" + urls[i].url + "</tr></td>");
+			for(var i = 0; i < pages.length; i++){
+				updateTable(i, pages);
 			}
 		});
 
+		//Close by refreshing page.
 		sideDOM.find("#close").click(function(e){
-			$("#scrapesave-wrapper").replaceWith($("#scrapesave-wrapper").contents());
-			$("#scrapesave-style").remove();
-			$("#scrapesave-sidebar").remove();
-			for(var i in loc){
-				$(loc[i]).removeClass("scrapesave-" + i);
-			}
 			history.go(0);
 		});
 
 		sideDOM.find("#save").click(function(e){
+			//Construct the saved html
 			var a = [];
-			console.log(urls);
-			for(var idx = 0; idx < urls.length; idx++){
-				var page = urls[idx];
+			for(var idx = 0; idx < pages.length; idx++){
+				var page = pages[idx];
 				var title = '<h1 class="chapter">' + page.title + '</h1>';
 				var body = $(page.body).html();
 				a.push(title + "<br>" + body);
 			}
-			console.log(a);
-			var blob = new Blob(a, {type: "text/html;charset=utf-8"});
-			saveAs(blob, "hello world.html");
+			
+			//Save the data
+			saveAs(new Blob(a, {type: "text/html;charset=utf-8"}), "saved_site.html");
 		});
 
+
+		//Allow highlighting by click
 		sideDOM.on('click', "#table-found tr", function(e){
 			console.log("CLICK");
 			sideDOM.find("#table-found tr.highlight").removeClass("highlight");
 			sideDOM.find(e.target).closest("tr").addClass('highlight');
+		});
+
+		//X-Button on table entries. Removes entry.
+		sideDOM.on('click', "#table-found td.x-button", function(e){
+			console.log(sideDOM.find("#table-found tr").index($(e.target).closest("tr")));
 		});
 	});
 });

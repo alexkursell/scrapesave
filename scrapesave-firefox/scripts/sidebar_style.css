@@ -72,3 +72,11 @@ div#tab-help.activeTab{
 	background-color: yellow;
 }
 
+td{
+	width:100%;
+}
+td.x-button{
+	text-align:right;
+	width:16px;
+}
+
