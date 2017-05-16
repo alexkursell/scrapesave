@@ -133,27 +133,56 @@ function extractURLList(thisDOM){
 	return links;
 }
 
+function refreshElements(list, idx, paths){
+	data = list[idx].html;
+	list[idx].title = $(recurseWalk(data, paths.title, 0, 1)).text();
+	list[idx].body = recurseWalk(data, paths.body, 0, 1);
+	list[idx].next = recurseWalk(data, paths.next, 0, 1);
+
+	updateTable(idx, list);
+}
+
 function scan(paths, list){
 	var title, body, next;
 	parser = new DOMParser();
+	console.log(paths);
 
 	for(var idx = 0; idx < list.length; idx++){
 		console.log(idx + " idx");
-		$.get(list[idx].url, function(idx){return function(data){
-			data = $(parser.parseFromString(data, "text/html"));
-			
-			title = $(recurseWalk(data, paths.title, 0, 1)).text();
-			body = recurseWalk(data, paths.body, 0, 1);
-			next = recurseWalk(data, paths.next, 0, 1);
-			
-			list[idx] = {"title":title, "body":body, "next":next, "url":list[idx].url};
-			updateTable(idx, list);
 
+		if (!(list[idx].html)){
+			$.get(list[idx].url, function(idx){return function(data){
+				list[idx].html = $(parser.parseFromString(data, "text/html"));
+				refreshElements(list, idx, paths);
 
-		}}(idx)).fail(function(){
-			console.log("Scan failed for URL(s): " + url);
-		});	
+			}}(idx)).fail(function(){
+				console.log("Scan failed for URL(s): " + url);
+			});	
+		}
+
+		else{
+			refreshElements(list, idx, paths);
+		}
+		
 	}
+}
+
+function generatePagePaths(loc){
+	var n = {};
+	for(var prop in loc){
+		if(loc.hasOwnProperty(prop)){
+			n[prop] = getSelectorPath(loc[prop]);
+		}
+	}
+	console.log(n);
+	return n;
+}
+
+function getIconString(name){
+	console.log(name);
+	return "<img class='pictogram' src='" +
+		chrome.extension.getURL("icons/open-iconic/svg/" + name + ".svg") + 
+		"'>"
 }
 
 function updateTable(idx, list){
@@ -173,8 +202,9 @@ function updateTable(idx, list){
 		$(sideDOM).find("#table-found").append("<tr><td></tr></td>");
 	}
 
-	sideDOM.find("#table-found tr").eq(idx).html("<td>" + text + "</td><td class='x-button'><img src='" +
-		chrome.extension.getURL("icons/open-iconic/svg/x.svg") +"'></td>");
+	sideDOM.find("#table-found tr").eq(idx).html("<td>" + text + 
+		"</td><td class='x-button'>" + 
+		getIconString("x") + "</td>");
 }
 
 
@@ -229,7 +259,14 @@ $(document).ready(function(){
 		
 		//The DOM for the sidebar
 		sideDOM = $("#scrapesave-sidebar").contents();
+		console.log("starting");
+		console.log(getIconSting("loop-square"));
+		//Inject icons
+		sideDOM.find("#manual-links").html(getIconString("pencil"));
 
+		sideDOM.find("#reverse-order").html(getIconSting("loop-square"));
+		console.log('done');
+		
 		//Implement tab switching
 		sideDOM.find("#tabbar button").click(function(e){
 			var sel = $(e.target).attr("id").replace("button-", "");
@@ -268,12 +305,8 @@ $(document).ready(function(){
 
 		//Get all HTML files in the table
 		sideDOM.find("#begin-scan").click(function(e){
-			var paths = [];
-			for(var i in loc){
-				paths.push(getSelectorPath(loc[i]));
-			}
 			
-			scan(new PagePaths(paths[0], paths[1], paths[2]), pages);
+			scan(generatePagePaths(loc), pages);
 		})
 
 
@@ -294,6 +327,9 @@ $(document).ready(function(){
 		});
 
 		sideDOM.find("#save").click(function(e){
+			//Perform scan
+			scan(generatePagePaths(loc), pages);
+			
 			//Construct the saved html
 			var a = [];
 			for(var idx = 0; idx < pages.length; idx++){
@@ -317,7 +353,10 @@ $(document).ready(function(){
 
 		//X-Button on table entries. Removes entry.
 		sideDOM.on('click', "#table-found td.x-button", function(e){
-			console.log(sideDOM.find("#table-found tr").index($(e.target).closest("tr")));
+			var idx = sideDOM.find("#table-found tr").index($(e.target).closest("tr"));
+
+			sideDOM.find("#table-found tr").eq(idx).remove();
+			pages.splice(idx, 1);
 		});
 	});
 });
