@@ -47,6 +47,10 @@ function comapareNodeAtributes(o, n){
 function recurseWalk(prev, attrs, idx, confidence){
 	//console.log("Level " + idx + " with a confidence of " + confidence * 100 + "%.");
 
+	if (idx == 0 && attrs.length == 0){
+		return null;
+	}
+
 	if (idx == attrs.length){
 		//console.log("Reached bottom.");
 		return prev;
@@ -135,22 +139,30 @@ function extractURLList(thisDOM){
 
 function refreshElements(list, idx, paths){
 	data = list[idx].html;
+	console.log(paths);
+
 	list[idx].title = $(recurseWalk(data, paths.title, 0, 1)).text();
 	list[idx].body = recurseWalk(data, paths.body, 0, 1);
 	list[idx].next = recurseWalk(data, paths.next, 0, 1);
+	
 
+	savedpages[list[idx].url] = list[idx];
 	updateTable(idx, list);
 }
 
 function scan(paths, list){
 	var title, body, next;
 	parser = new DOMParser();
-	console.log(paths);
 
 	for(var idx = 0; idx < list.length; idx++){
-		console.log(idx + " idx");
 
-		if (!(list[idx].html)){
+		if (list[idx].url in savedpages){
+			list[idx] = savedpages[list[idx].url];
+			refreshElements(list, idx, paths);
+		}
+
+		else if (!(list[idx].html)){
+			console.log("Getting " + list[idx].url);
 			$.get(list[idx].url, function(idx){return function(data){
 				list[idx].html = $(parser.parseFromString(data, "text/html"));
 				refreshElements(list, idx, paths);
@@ -174,19 +186,16 @@ function generatePagePaths(loc){
 			n[prop] = getSelectorPath(loc[prop]);
 		}
 	}
-	console.log(n);
 	return n;
 }
 
 function getIconString(name){
-	console.log(name);
 	return "<img class='pictogram' src='" +
 		chrome.extension.getURL("icons/open-iconic/svg/" + name + ".svg") + 
 		"'>"
 }
 
 function updateTable(idx, list){
-	console.log(idx, list[idx]);
 	var text;
 	
 	if(list[idx].title){
@@ -196,9 +205,7 @@ function updateTable(idx, list){
 		text = list[idx].url;
 	}
 
-	console.log(text);
 	while($(sideDOM).find("#table-found tr").length < idx + 1){
-		console.log("ADDING");
 		$(sideDOM).find("#table-found").append("<tr><td></tr></td>");
 	}
 
@@ -211,6 +218,7 @@ function updateTable(idx, list){
 //Important global variables
 sideDOM = null;
 pages = [];
+savedpages = {};
 
 
 $(document).ready(function(){
@@ -259,13 +267,12 @@ $(document).ready(function(){
 		
 		//The DOM for the sidebar
 		sideDOM = $("#scrapesave-sidebar").contents();
-		console.log("starting");
-		console.log(getIconSting("loop-square"));
+
 		//Inject icons
 		sideDOM.find("#manual-links").html(getIconString("pencil"));
 
-		sideDOM.find("#reverse-order").html(getIconSting("loop-square"));
-		console.log('done');
+		sideDOM.find("#reverse-order").html(getIconString("loop-square"));
+
 		
 		//Implement tab switching
 		sideDOM.find("#tabbar button").click(function(e){
@@ -305,7 +312,6 @@ $(document).ready(function(){
 
 		//Get all HTML files in the table
 		sideDOM.find("#begin-scan").click(function(e){
-			
 			scan(generatePagePaths(loc), pages);
 		})
 
@@ -315,10 +321,10 @@ $(document).ready(function(){
 			sideDOM.find("#table-found").empty();
 			
 			pages = extractURLList($(loc["pageslist"]));
-			
 			for(var i = 0; i < pages.length; i++){
 				updateTable(i, pages);
 			}
+
 		});
 
 		//Close by refreshing page.
@@ -346,7 +352,6 @@ $(document).ready(function(){
 
 		//Allow highlighting by click
 		sideDOM.on('click', "#table-found tr", function(e){
-			console.log("CLICK");
 			sideDOM.find("#table-found tr.highlight").removeClass("highlight");
 			sideDOM.find(e.target).closest("tr").addClass('highlight');
 		});
@@ -357,6 +362,13 @@ $(document).ready(function(){
 
 			sideDOM.find("#table-found tr").eq(idx).remove();
 			pages.splice(idx, 1);
+		});
+
+		sideDOM.find("#reverse-order").click(function(e){
+			pages.reverse();
+			for(var i = 0; i < pages.length; i++){
+				updateTable(i, pages);
+			}
 		});
 	});
 });

@@ -60,12 +60,22 @@ form {
 	overflow-y:hidden;
 }
 
+#textarea-found{
+	overflow-y: auto;
+	display: none;
+}
+
+#table-found{
+	display: none;
+	overflow-y:auto;
+}
+
+.activeFound{
+	display:block !important;
+}
+
 div#tab-help.activeTab{
 	display:block;
-}
-#table-found{
-	display: block;
-	overflow-y:auto;
 }
 
 .highlight{
