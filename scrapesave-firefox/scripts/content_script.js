@@ -214,6 +214,31 @@ function updateTable(idx, list){
 		getIconString("x") + "</td>");
 }
 
+function parseTextList(text){
+	var pages = [];
+	var a = text.split("\n");
+	for(var i = 0; i < a.length; i++){
+		var url = a[i];
+		if(url == "" || url == "\n"){
+			continue;
+		}
+		url = $.trim(url);
+
+		pages.push({"url":url});
+	}
+
+	return pages;
+}
+
+function createTextList(pages){
+	var text = "";
+	for(var i = 0; i < pages.length; i++){
+		text = text + pages[i].url + "\n";
+	}
+	console.log(text);
+	return text;
+}
+
 
 //Important global variables
 sideDOM = null;
@@ -368,6 +393,26 @@ $(document).ready(function(){
 			pages.reverse();
 			for(var i = 0; i < pages.length; i++){
 				updateTable(i, pages);
+			}
+		});
+
+		sideDOM.find("#manual-links").click(function(e){
+			if(sideDOM.find("#textarea-found").hasClass("activeFound")){
+				pages = parseTextList(sideDOM.find("#textarea-found").val());
+				
+				for(var i = 0; i < pages.length; i++){
+					updateTable(i, pages);
+				}
+				
+				sideDOM.find("#textarea-found").removeClass("activeFound");
+				sideDOM.find("#table-found").addClass("activeFound");
+			}
+			else{
+				sideDOM.find("#textarea-found").val(createTextList(pages));
+
+				sideDOM.find("#table-found").removeClass("activeFound");
+				sideDOM.find("#textarea-found").addClass("activeFound");
+
 			}
 		});
 	});
