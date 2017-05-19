@@ -218,21 +218,25 @@ function updateTable(idx, list){
 		$(sideDOM).find("#table-found").append("<tr><td></tr></td>");
 	}
 
-	sideDOM.find("#table-found tr").eq(idx).html("<td>" + text + 
-		"</td><td class='x-button'>" + 
-		getIconString("x") + "</td>");
+	sideDOM.find("#table-found tr").eq(idx).html(
+		"<td>" + text + 
+		"</td><td class='view-button'>" + getIconString("eye") + 
+		"</td><td class='x-button'>" + getIconString("x") + 
+		"</td>");
 }
 
 function parseTextList(text){
 	var pages = [];
 	var a = text.split("\n");
+
+	//Read each line as a url. Ignore empty lines.
 	for(var i = 0; i < a.length; i++){
 		var url = a[i];
 		if(url == "" || url == "\n"){
 			continue;
 		}
-		url = $.trim(url);
 
+		url = $.trim(url);
 		pages.push({"url":getAbsolutePath(url)});
 	}
 
@@ -241,10 +245,11 @@ function parseTextList(text){
 
 function createTextList(pages){
 	var text = "";
+	//Add each url separated by a newline
 	for(var i = 0; i < pages.length; i++){
 		text = text + pages[i].url + "\n";
 	}
-	console.log(text);
+
 	return text;
 }
 
@@ -282,6 +287,7 @@ $(document).ready(function(){
 		
 		var sel = getSelectedBox(sideDOM);
 
+		//The next item must always be a link.
 		if(sel == "next" && e.target.tagName.toLowerCase() != "a"){
 			return;
 		}
