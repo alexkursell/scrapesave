@@ -402,6 +402,11 @@ $(document).ready(function(){
 			pages.splice(idx, 1);
 		});
 
+		//Preview-button on table entries. Opens page in iframe
+		sideDOM.on("click", "#table-found td.view-button", function(e){
+			
+		});
+
 		//Reverses the order of the pages
 		sideDOM.find("#reverse-order").click(function(e){
 			pages.reverse();
