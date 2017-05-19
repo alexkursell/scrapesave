@@ -126,11 +126,17 @@ function getSelectedBox(DOM){
 	return DOM.find("#chooseelement input[type='radio']:checked").val();
 }
 
+function getAbsolutePath(href) {
+    var link = document.createElement("a");
+    link.href = href;
+    return (window.location.protocol+"//"+link.host+link.pathname+link.search+link.hash);
+}
+
 function extractURLList(thisDOM){
 	var links = [];
 	$(thisDOM).find("a").each(function(index){
 		if($(this).attr('href')){
-			links.push({"url": $(this).attr('href')});
+			links.push({"url": getAbsolutePath($(this).attr("href"))});
 		}
 	});
 
@@ -164,11 +170,14 @@ function scan(paths, list){
 		else if (!(list[idx].html)){
 			console.log("Getting " + list[idx].url);
 			$.get(list[idx].url, function(idx){return function(data){
+				console.log("Got");
 				list[idx].html = $(parser.parseFromString(data, "text/html"));
 				refreshElements(list, idx, paths);
 
 			}}(idx)).fail(function(){
 				console.log("Scan failed for URL(s): " + url);
+			}).always(function(){
+				console.log("DONE");
 			});	
 		}
 
@@ -224,7 +233,7 @@ function parseTextList(text){
 		}
 		url = $.trim(url);
 
-		pages.push({"url":url});
+		pages.push({"url":getAbsolutePath(url)});
 	}
 
 	return pages;
@@ -295,7 +304,6 @@ $(document).ready(function(){
 
 		//Inject icons
 		sideDOM.find("#manual-links").html(getIconString("pencil"));
-
 		sideDOM.find("#reverse-order").html(getIconString("loop-square"));
 
 		
@@ -334,12 +342,10 @@ $(document).ready(function(){
 			}
 		});
 
-
 		//Get all HTML files in the table
 		sideDOM.find("#begin-scan").click(function(e){
 			scan(generatePagePaths(loc), pages);
 		})
-
 
 		//Gets all specified links, adds them to the table
 		sideDOM.find("#pages-scan").click(function(e){
@@ -357,6 +363,7 @@ $(document).ready(function(){
 			history.go(0);
 		});
 
+		//Save pages
 		sideDOM.find("#save").click(function(e){
 			//Perform scan
 			scan(generatePagePaths(loc), pages);
@@ -389,30 +396,46 @@ $(document).ready(function(){
 			pages.splice(idx, 1);
 		});
 
+		//Reverses the order of the pages
 		sideDOM.find("#reverse-order").click(function(e){
 			pages.reverse();
+
+			//Update table
 			for(var i = 0; i < pages.length; i++){
 				updateTable(i, pages);
 			}
 		});
 
+		//Manually edit the list of URLs as text (newline separated)
 		sideDOM.find("#manual-links").click(function(e){
+			//If we are in text editing mode
 			if(sideDOM.find("#textarea-found").hasClass("activeFound")){
+				//Get the new list of pages from the textarea.
 				pages = parseTextList(sideDOM.find("#textarea-found").val());
 				
+				//Update the whole table with new page information.
 				for(var i = 0; i < pages.length; i++){
 					updateTable(i, pages);
 				}
+
+				//Enable all of the editing buttons
+				sideDOM.find("#tab-found .button-panel button, #save").prop("disabled", false);
 				
+				//Switch the visibility back to the table.
 				sideDOM.find("#textarea-found").removeClass("activeFound");
 				sideDOM.find("#table-found").addClass("activeFound");
 			}
+			//If we are in table mode
 			else{
+				//Put the current list of URLs into the textarea
 				sideDOM.find("#textarea-found").val(createTextList(pages));
 
+				//Disable all of the other editing buttons
+				sideDOM.find("#tab-found .button-panel button, #save").not("#manual-links").prop("disabled", true);
+
+				//Switch the visibility to the textarea
 				sideDOM.find("#table-found").removeClass("activeFound");
 				sideDOM.find("#textarea-found").addClass("activeFound");
-
 			}
 		});
 	});
