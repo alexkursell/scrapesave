@@ -7,6 +7,31 @@ function NodeAttributes(nodeType, classes, id, index, orig) {
     this.originalObject = orig;
 }
 
+function getScrollbarWidth() {
+    var outer = document.createElement("div");
+    outer.style.visibility = "hidden";
+    outer.style.width = "100px";
+    outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+
+    document.body.appendChild(outer);
+
+    var widthNoScroll = outer.offsetWidth;
+    // force scrollbars
+    outer.style.overflow = "scroll";
+
+    // add innerdiv
+    var inner = document.createElement("div");
+    inner.style.width = "100%";
+    outer.appendChild(inner);        
+
+    var widthWithScroll = inner.offsetWidth;
+
+    // remove divs
+    outer.parentNode.removeChild(outer);
+
+    return widthNoScroll - widthWithScroll;
+}
+
 function PagePaths(titlepath, bodypath, nextpath){
 	this.title = titlepath;
 	this.body = bodypath;
@@ -280,6 +305,7 @@ $(document).ready(function(){
 	//Wrap page and create sidebar
 	$('body').wrapInner("<div id='scrapesave-wrapper'></div>");
 	$('body').append("<iframe id='scrapesave-sidebar' scrolling='no' src='" + sidebarUrl + "' style='position:fixed;z-index:99999999;bottom:0;right:0;height:66vh;width:33vw'></iframe>");
+	$('body').append("<iframe id='scrapesave-preview' src='' style='position:fixed;z-index:99999998;bottom:0;top:0;left:0;right:0;height:100vh;width:100vw;margin:auto;display:none;overflow-y:scroll'></iframe>");
 
 	//Prevent clicking links
 	$("#scrapesave-wrapper").click(function(e){
@@ -404,7 +430,13 @@ $(document).ready(function(){
 
 		//Preview-button on table entries. Opens page in iframe
 		sideDOM.on("click", "#table-found td.view-button", function(e){
-			
+			var idx = sideDOM.find("#table-found tr").index($(e.target).closest("tr"));
+
+			$("body").css("overflow", "hidden");
+			$("#scrapesave-preview").attr("src", pages[idx].url);
+			$("#scrapesave-preview").css("display", "block");
+
+			console.log($("#scrapesave-preview").offsetWidth - $("#scrapesave-preview").clientWidth);
 		});
 
 		//Reverses the order of the pages
