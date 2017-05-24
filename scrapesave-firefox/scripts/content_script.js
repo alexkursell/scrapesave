@@ -151,9 +151,9 @@ function getAbsolutePath(href) {
     return (window.location.protocol+"//"+link.host+link.pathname+link.search+link.hash);
 }
 
-function extractURLList(thisDOM){
+function extractURLList(DOM){
 	var links = [];
-	$(thisDOM).find("a").each(function(index){
+	$(DOM).find("a").each(function(index){
 		if($(this).attr('href')){
 			links.push({"url": getAbsolutePath($(this).attr("href"))});
 		}
@@ -176,7 +176,6 @@ function refreshElements(list, idx, paths){
 }
 
 function scan(paths, list){
-	var title, body, next;
 	parser = new DOMParser();
 
 	for(var idx = 0; idx < list.length; idx++){
@@ -272,11 +271,84 @@ function createTextList(pages){
 	return text;
 }
 
+function pageClickCallback(e){
+	e.preventDefault();
+		
+	var sel = getSelectedBox(sideDOM);
+
+	//The next item must always be a link.
+	if(sel == "next" && e.target.tagName.toLowerCase() != "a"){
+		return;
+	}
+
+	e.stopPropagation();
+	
+	$(loc[sel]).removeClass("scrapesave-" + sel);
+	$(e.target).addClass("scrapesave-" + sel);
+	
+	console.log("DONE");
+	
+	
+	loc[sel] = e.target;
+	console.log("DOUBLEDONE");
+
+}
+
+function injectCSS(DOM){
+	$(DOM).find("head").append(`<style id='scrapesave-style'> 
+		.scrapesave-pageslist {
+			background-color: pink !important;
+			border: 1px solid black;
+		}
+		.scrapesave-title {
+			background-color: orange !important;
+			border: 1px solid black;
+		}
+		.scrapesave-body {
+			background-color: yellow !important;
+			border: 1px solid black;
+		}
+		.scrapesave-next {
+			background-color: green !important;
+			border: 1px solid black;
+		}
+		#scrapesave-sidebar {
+			position:fixed;
+			z-index:99999999;
+			bottom:0;
+			right:0;
+			height:66vh;
+			width:33vw
+		}
+		#scrapesave-preview {
+			position:fixed;
+			z-index:99999998;
+			bottom:0;
+			top:0;
+			left:0;
+			right:0;
+			height:100vh;
+			width:100vw;
+			margin:auto;
+			display:none;
+			overflow-y:scroll
+		}
+		</style>`);
+}
+
 
 //Important global variables
 sideDOM = null;
 pages = [];
 savedpages = {};
+
+//Locations of the currently selected nodes
+var loc = {
+	"title": null,
+	"body": null,
+	"next": null,
+	"pageslist": null
+}
 
 
 $(document).ready(function(){
@@ -284,42 +356,20 @@ $(document).ready(function(){
 	var pageStyleUrl = chrome.extension.getURL("scripts/page_style.css");
 	
 
-	//Locations of the currently selected nodes
-	var loc = {
-		"title": null,
-		"body": null,
-		"next": null,
-		"pageslist": null
-	}
+	
 
 	//Add custom css styling for highlighted sections
 	//I would just link a css file, but for some reason firefox dosen't apply it.
-	$("head").append("<style id='scrapesave-style'> .scrapesave-pageslist {background-color: pink !important;border: 1px solid black;}.scrapesave-title {background-color: orange !important;border: 1px solid black;}.scrapesave-body {background-color: yellow !important;border: 1px solid black;}.scrapesave-next {background-color: green !important;border: 1px solid black;}</style>");
+	injectCSS(document);
+	
 
 	//Wrap page and create sidebar
 	$('body').wrapInner("<div id='scrapesave-wrapper'></div>");
-	$('body').append("<iframe id='scrapesave-sidebar' scrolling='no' src='" + sidebarUrl + "' style='position:fixed;z-index:99999999;bottom:0;right:0;height:66vh;width:33vw'></iframe>");
-	$('body').append("<iframe id='scrapesave-preview' src='' style='position:fixed;z-index:99999998;bottom:0;top:0;left:0;right:0;height:100vh;width:100vw;margin:auto;display:none;overflow-y:scroll'></iframe>");
+	$('body').append("<iframe id='scrapesave-sidebar' scrolling='no' src='" + sidebarUrl + "'></iframe>");
+	$('body').append("<iframe id='scrapesave-preview' src=''></iframe>");
 
 	//Prevent clicking links
-	$("#scrapesave-wrapper").click(function(e){
-		e.preventDefault();
-		
-		var sel = getSelectedBox(sideDOM);
-
-		//The next item must always be a link.
-		if(sel == "next" && e.target.tagName.toLowerCase() != "a"){
-			return;
-		}
-
-		e.stopPropagation();
-
-		$(e.target).addClass("scrapesave-" + sel);
-		$(loc[sel]).removeClass("scrapesave-" + sel);
-		
-		
-		loc[sel] = e.target;
-	});
+	$("#scrapesave-wrapper").click(pageClickCallback);
 	
 
 	//All of the event handlers for the actual sidebar
@@ -426,11 +476,27 @@ $(document).ready(function(){
 		sideDOM.on("click", "#table-found td.view-button", function(e){
 			var idx = sideDOM.find("#table-found tr").index($(e.target).closest("tr"));
 
-			$("body").css("overflow", "hidden");
-			$("#scrapesave-preview").attr("src", pages[idx].url);
-			$("#scrapesave-preview").css("display", "block");
+			if($("#scrapesave-preview").attr("src") == pages[idx].url){
+				$("body").css("overflow", "auto");
+				$("#scrapesave-preview").css("display", "none");
+				$("#scrapesave-preview").attr("src", "");
+				$("#scrapesave-sidebar").css("right", "0");
+				return;
+			}
 
-			$("#scrapesave-sidebar").css("right", getScrollbarWidth() + "px");
+			if($("#scrapesave-preview").attr("src") == ""){
+				$("body").css("overflow", "hidden");
+				$("#scrapesave-preview").css("display", "block");
+				$("#scrapesave-sidebar").css("right", getScrollbarWidth() + "px");
+			}
+
+			
+			$("#scrapesave-preview").attr("src", pages[idx].url);
+			$("#scrapesave-preview").on("load", function(){
+				var pageDOM = $("#scrapesave-preview").contents();
+				injectCSS(pageDOM);
+				$(pageDOM).click(pageClickCallback);
+			});
 		});
 
 		//Reverses the order of the pages
