@@ -294,46 +294,14 @@ function pageClickCallback(e){
 
 }
 
+function applyPagePaths(loc, DOM){
+
+}
+
 function injectCSS(DOM){
-	$(DOM).find("head").append(`<style id='scrapesave-style'> 
-		.scrapesave-pageslist {
-			background-color: pink !important;
-			border: 1px solid black;
-		}
-		.scrapesave-title {
-			background-color: orange !important;
-			border: 1px solid black;
-		}
-		.scrapesave-body {
-			background-color: yellow !important;
-			border: 1px solid black;
-		}
-		.scrapesave-next {
-			background-color: green !important;
-			border: 1px solid black;
-		}
-		#scrapesave-sidebar {
-			position:fixed;
-			z-index:99999999;
-			bottom:0;
-			right:0;
-			height:66vh;
-			width:33vw
-		}
-		#scrapesave-preview {
-			position:fixed;
-			z-index:99999998;
-			bottom:0;
-			top:0;
-			left:0;
-			right:0;
-			height:100vh;
-			width:100vw;
-			margin:auto;
-			display:none;
-			overflow-y:scroll
-		}
-		</style>`);
+	$.get(chrome.extension.getURL("scripts/page_style.css"), function(data){
+		$(DOM).find("head").append("<style id='scrapesave-style'>" + data + "</style>");
+	});
 }
 
 
@@ -353,9 +321,6 @@ var loc = {
 
 $(document).ready(function(){
 	var sidebarUrl = chrome.extension.getURL("scripts/sidebar.html");
-	var pageStyleUrl = chrome.extension.getURL("scripts/page_style.css");
-	
-
 	
 
 	//Add custom css styling for highlighted sections
@@ -478,15 +443,19 @@ $(document).ready(function(){
 
 			if($("#scrapesave-preview").attr("src") == pages[idx].url){
 				$("body").css("overflow", "auto");
+				
 				$("#scrapesave-preview").css("display", "none");
 				$("#scrapesave-preview").attr("src", "");
+				
 				$("#scrapesave-sidebar").css("right", "0");
 				return;
 			}
 
 			if($("#scrapesave-preview").attr("src") == ""){
 				$("body").css("overflow", "hidden");
+				
 				$("#scrapesave-preview").css("display", "block");
+				
 				$("#scrapesave-sidebar").css("right", getScrollbarWidth() + "px");
 			}
 
@@ -511,6 +480,7 @@ $(document).ready(function(){
 
 		//Manually edit the list of URLs as text (newline separated)
 		sideDOM.find("#manual-links").click(function(e){
+			
 			//If we are in text editing mode
 			if(sideDOM.find("#textarea-found").hasClass("activeFound")){
 				//Get the new list of pages from the textarea.
@@ -528,6 +498,7 @@ $(document).ready(function(){
 				sideDOM.find("#textarea-found").removeClass("activeFound");
 				sideDOM.find("#table-found").addClass("activeFound");
 			}
+			
 			//If we are in table mode
 			else{
 				//Put the current list of URLs into the textarea

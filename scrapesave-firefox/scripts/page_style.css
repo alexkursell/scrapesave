@@ -1,19 +1,37 @@
-
+.scrapesave-pageslist {
+	background-color: pink !important;
+	border: 1px solid black;
+}
 .scrapesave-title {
 	background-color: orange !important;
 	border: 1px solid black;
 }
-
 .scrapesave-body {
 	background-color: yellow !important;
 	border: 1px solid black;
 }
-
 .scrapesave-next {
 	background-color: green !important;
 	border: 1px solid black;
 }
-
-h1 {
-	border: 1px solid red;
+#scrapesave-sidebar {
+	position:fixed;
+	z-index:99999999;
+	bottom:0;
+	right:0;
+	height:66vh;
+	width:33vw
+}
+#scrapesave-preview {
+	position:fixed;
+	z-index:99999998;
+	bottom:0;
+	top:0;
+	left:0;
+	right:0;
+	height:100vh;
+	width:100vw;
+	margin:auto;
+	display:none;
+	overflow-y:scroll
 }
