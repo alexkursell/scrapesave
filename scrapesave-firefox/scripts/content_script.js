@@ -295,6 +295,7 @@ function pageClickCallback(e){
 }
 
 function applyPagePaths(loc, DOM){
+	var paths = generatePagePaths(loc);
 
 }
 
@@ -441,26 +442,38 @@ $(document).ready(function(){
 		sideDOM.on("click", "#table-found td.view-button", function(e){
 			var idx = sideDOM.find("#table-found tr").index($(e.target).closest("tr"));
 
+			//Clicking on already opened preview button means close the preview
 			if($("#scrapesave-preview").attr("src") == pages[idx].url){
+				
+				//Allow scrolling on body again
 				$("body").css("overflow", "auto");
 				
+				//Hide and remove iframe source
 				$("#scrapesave-preview").css("display", "none");
 				$("#scrapesave-preview").attr("src", "");
 				
+				//Move sidebar back to right of screen
 				$("#scrapesave-sidebar").css("right", "0");
 				return;
 			}
 
+			//No src means no currently opened preview.
 			if($("#scrapesave-preview").attr("src") == ""){
-				$("body").css("overflow", "hidden");
 				
+				//Remove scrollbar on page
+				$("body").css("overflow", "hidden");
+
+				//Display the preview iframe
 				$("#scrapesave-preview").css("display", "block");
 				
+				//Move sidebar to left of the scrollbar.
 				$("#scrapesave-sidebar").css("right", getScrollbarWidth() + "px");
 			}
 
-			
+			//Set specified url as src
 			$("#scrapesave-preview").attr("src", pages[idx].url);
+
+			//Wait for iframe to load then inject CSS and click handlers
 			$("#scrapesave-preview").on("load", function(){
 				var pageDOM = $("#scrapesave-preview").contents();
 				injectCSS(pageDOM);
@@ -470,9 +483,10 @@ $(document).ready(function(){
 
 		//Reverses the order of the pages
 		sideDOM.find("#reverse-order").click(function(e){
+			//Obvious
 			pages.reverse();
 
-			//Update table
+			//Update table for all elements
 			for(var i = 0; i < pages.length; i++){
 				updateTable(i, pages);
 			}
