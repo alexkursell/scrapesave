@@ -11,7 +11,6 @@ function getScrollbarWidth() {
     var outer = document.createElement("div");
     outer.style.visibility = "hidden";
     outer.style.width = "100px";
-    outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
 
     document.body.appendChild(outer);
 
@@ -32,11 +31,6 @@ function getScrollbarWidth() {
     return widthNoScroll - widthWithScroll;
 }
 
-function PagePaths(titlepath, bodypath, nextpath){
-	this.title = titlepath;
-	this.body = bodypath;
-	this.next = nextpath;
-}
 
 function comapareNodeAtributes(o, n){
 	var os = 0;
@@ -415,10 +409,10 @@ $(document).ready(function(){
 
 
 		//Allow highlighting by click
-		sideDOM.on('click', "#table-found tr", function(e){
+		/*sideDOM.on('click', "#table-found tr", function(e){
 			sideDOM.find("#table-found tr.highlight").removeClass("highlight");
 			sideDOM.find(e.target).closest("tr").addClass('highlight');
-		});
+		});*/
 
 		//X-Button on table entries. Removes entry.
 		sideDOM.on('click', "#table-found td.x-button", function(e){
@@ -436,7 +430,7 @@ $(document).ready(function(){
 			$("#scrapesave-preview").attr("src", pages[idx].url);
 			$("#scrapesave-preview").css("display", "block");
 
-			console.log($("#scrapesave-preview").offsetWidth - $("#scrapesave-preview").clientWidth);
+			$("#scrapesave-sidebar").css("right", getScrollbarWidth() + "px");
 		});
 
 		//Reverses the order of the pages
