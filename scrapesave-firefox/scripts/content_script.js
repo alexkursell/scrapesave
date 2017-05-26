@@ -164,7 +164,6 @@ function extractURLList(DOM){
 
 function refreshElements(list, idx, paths){
 	data = list[idx].html;
-	console.log(paths);
 
 	list[idx].title = $(recurseWalk(data, paths.title, 0, 1)).text();
 	list[idx].body = recurseWalk(data, paths.body, 0, 1);
@@ -172,17 +171,30 @@ function refreshElements(list, idx, paths){
 	
 
 	savedpages[list[idx].url] = list[idx];
+
 	updateTable(idx, list);
+}
+
+function scanItemCompleted(requestsCompleted, requestsTotal){
+
+	if(requestsCompleted == requestsTotal){
+		sideDOM.find("#save").prop("disabled", false);
+	}
 }
 
 function scan(paths, list){
 	parser = new DOMParser();
 
-	for(var idx = 0; idx < list.length; idx++){
+	var requestsCompleted = 0;
+	var requestsTotal = list.length;
 
+	for(var idx = 0; idx < list.length; idx++){
 		if (list[idx].url in savedpages){
 			list[idx] = savedpages[list[idx].url];
 			refreshElements(list, idx, paths);
+
+			requestsCompleted += 1;
+			scanItemCompleted(requestsCompleted, requestsTotal);
 		}
 
 		else if (!(list[idx].html)){
@@ -195,12 +207,17 @@ function scan(paths, list){
 			}}(idx)).fail(function(){
 				console.log("Scan failed for URL(s): " + url);
 			}).always(function(){
-				console.log("DONE");
+				
+				requestsCompleted += 1;
+				scanItemCompleted(requestsCompleted, requestsTotal);
 			});	
 		}
 
 		else{
 			refreshElements(list, idx, paths);
+			
+			requestsCompleted += 1;
+			scanItemCompleted(requestsCompleted, requestsTotal);
 		}
 		
 	}
@@ -283,14 +300,18 @@ function pageClickCallback(e){
 
 	e.stopPropagation();
 	
+	if(e.target == loc[sel]){
+		return
+	}
+	
+
 	$(loc[sel]).removeClass("scrapesave-" + sel);
 	$(e.target).addClass("scrapesave-" + sel);
 	
-	console.log("DONE");
-	
 	
 	loc[sel] = e.target;
-	console.log("DOUBLEDONE");
+
+	sideDOM.find("#save").prop("disabled", true);
 
 }
 
@@ -407,12 +428,10 @@ $(document).ready(function(){
 
 		//Save pages
 		sideDOM.find("#save").click(function(e){
-			//Perform scan
-			scan(generatePagePaths(loc), pages);
-			
 			//Construct the saved html
 			var a = [];
 			for(var idx = 0; idx < pages.length; idx++){
+				console.log("LOOPING " + idx);
 				var page = pages[idx];
 				var title = '<h1 class="chapter">' + page.title + '</h1>';
 				var body = $(page.body).html();
