@@ -66,8 +66,13 @@ form {
 	
 }
 
-.button-panel button:active{
+.button-panel button:active:not(:disabled){
 	background-color: #cdcdcd;
+}
+
+button:disabled{
+	background-color: #dadada;
+	color: #a7a7a7;
 }
 
 #global-options{

@@ -429,6 +429,7 @@ $(document).ready(function(){
 		//Save pages
 		sideDOM.find("#save").click(function(e){
 			//Construct the saved html
+			console.log("SAVE");
 			var a = [];
 			for(var idx = 0; idx < pages.length; idx++){
 				console.log("LOOPING " + idx);
