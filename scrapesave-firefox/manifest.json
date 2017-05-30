@@ -7,7 +7,7 @@
   "description": "Collate and save multi-page web content such as blogs, webcomics, serials and more.",
 
   "icons": {
-    "20":"icons/alex-20x20.png"
+    "20":"icons/icon.svg"
   },
 
   "permissions": [
@@ -15,9 +15,12 @@
   ],
 
   "browser_action": {
-    "default_icon": "icons/alex-20x20.png",
-    "default_title": "ScrapeSave",
-    "default_popup": "popup/test_popup.html"
+    "default_icon": "icons/icon.svg",
+    "default_title": "ScrapeSave"
+  },
+
+  "background": {
+    "scripts": ["scripts/background_script.js"]
   },
 
   "web_accessible_resources": [
