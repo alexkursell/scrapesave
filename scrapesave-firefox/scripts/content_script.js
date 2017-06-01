@@ -100,7 +100,6 @@ function recurseWalk(prev, attrs, idx, confidence){
 
 function getSelectorPath(e) {
     if ($(e).prop('tagName')) {
-        //console.log(getFindSelector(e));
 
         var path = getSelectorPath($(e).parent());
         if($(e).attr('id') != "scrapesave-wrapper"){
@@ -200,14 +199,12 @@ function scan(paths, list){
 		else if (!(list[idx].html)){
 			console.log("Getting " + list[idx].url);
 			$.get(list[idx].url, function(idx){return function(data){
-				console.log("Got");
 				list[idx].html = $(parser.parseFromString(data, "text/html"));
 				refreshElements(list, idx, paths);
 
 			}}(idx)).fail(function(){
 				console.log("Scan failed for URL(s): " + url);
 			}).always(function(){
-				
 				requestsCompleted += 1;
 				scanItemCompleted(requestsCompleted, requestsTotal);
 			});	
@@ -319,6 +316,13 @@ function pageClickCallback(e){
 function applyPagePaths(loc, DOM){
 	var paths = generatePagePaths(loc);
 
+	for(var key in paths){
+		$(DOM).find(".scrapesave-" + key).removeClass("scrapesave-" + key);
+		$(recurseWalk(DOM, paths[key], 0, 1)).addClass("scrapesave-" + key);
+	}
+
+	return paths;
+
 }
 
 function injectCSS(DOM){
@@ -344,11 +348,7 @@ var loc = {
 	"pageslist": null
 }
 
-
 $(document).ready(function(){
-	var sidebarUrl = chrome.extension.getURL("resources/sidebar.html");
-	
-
 	//Add custom css styling for highlighted sections
 	//I would just link a css file, but for some reason firefox dosen't apply it.
 	injectCSS(document);
@@ -356,26 +356,26 @@ $(document).ready(function(){
 
 	//Wrap page and create sidebar
 	$('body').wrapInner("<div id='scrapesave-wrapper'></div>");
-	$('body').append("<iframe id='scrapesave-sidebar' scrolling='no' src='" + sidebarUrl + "'></iframe>");
+	
+	$('body').append("<iframe id='scrapesave-sidebar' scrolling='no' src='" + 
+		chrome.extension.getURL("resources/sidebar.html") + 
+		"'></iframe>");
+	
 	$('body').append("<iframe id='scrapesave-preview' src=''></iframe>");
 
+	
 	//Prevent clicking links
 	$("#scrapesave-wrapper").click(pageClickCallback);
 	
-
 	//All of the event handlers for the actual sidebar
 	$('#scrapesave-sidebar').on("load", function(){
-		
 		//The DOM for the sidebar
 		sideDOM = $("#scrapesave-sidebar").contents();
-
-	
 
 		//Inject icons
 		sideDOM.find("#manual-links").html(getIconString("pencil"));
 		sideDOM.find("#reverse-order").html(getIconString("loop-square"));
 
-		
 		//Implement tab switching
 		sideDOM.find("#tabbar button").click(function(e){
 			var sel = $(e.target).attr("id").replace("button-", "");
@@ -435,37 +435,18 @@ $(document).ready(function(){
 		//Save pages
 		sideDOM.find("#save").click(function(e){
 			//Construct the saved html
-			console.log("SAVE");
+			
 			var a = [];
 			for(var idx = 0; idx < pages.length; idx++){
-				console.log("LOOPING " + idx);
 				var page = pages[idx];
 				var title = '<h1 class="chapter">' + page.title + '</h1>';
 				var body = $(page.body).html();
 				a.push(title + "<br>" + body);
 			}
 			
-			console.log("SAVE");
 			//Save the data
-
-			var blob = new Blob(a, {type: "text/html;charset=utf-8"});
-			console.log("BLOB");
-			console.log(a);
-			try{
-				saveAs(blob, "saved_site.html");
-			}
-			catch (err){
-				console.log(err);
-			}
-			console.log("DONE");
+			saveAs(new Blob(a, {type: "text/html;charset=utf-8"}), "saved_site.html");
 		});
-
-
-		//Allow highlighting by click
-		/*sideDOM.on('click', "#table-found tr", function(e){
-			sideDOM.find("#table-found tr.highlight").removeClass("highlight");
-			sideDOM.find(e.target).closest("tr").addClass('highlight');
-		});*/
 
 		//X-Button on table entries. Removes entry.
 		sideDOM.on('click', "#table-found td.x-button", function(e){
@@ -496,6 +477,9 @@ $(document).ready(function(){
 				
 				//Move sidebar back to right of screen
 				$("#scrapesave-sidebar").css("right", "0");
+
+				//Reapply selections
+				loc = applyPagePaths(loc, document);
 				return;
 			}
 
@@ -524,6 +508,7 @@ $(document).ready(function(){
 				var pageDOM = $("#scrapesave-preview").contents();
 				injectCSS(pageDOM);
 				$(pageDOM).click(pageClickCallback);
+				loc = applyPagePaths(loc, pageDOM);
 			});
 		});
 
