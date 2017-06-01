@@ -235,7 +235,7 @@ function generatePagePaths(loc){
 
 function getIconString(name){
 	return '<svg viewBox="0 0 8 8" class="pictogram"><use xlink:href="' +
-			chrome.extension.getURL("icons/open-iconic-master/sprite/open-iconic.svg") +
+			chrome.extension.getURL("icons/open-iconic.min.svg") +
 			'#' + name + '" class="icon-account-login pictogram"></use></svg>'
 
 }
@@ -323,7 +323,7 @@ function applyPagePaths(loc, DOM){
 
 function injectCSS(DOM){
 	
-	$.get(chrome.extension.getURL("scripts/page_style.css"), function(data){
+	$.get(chrome.extension.getURL("resources/page_style.css"), function(data){
 		$(DOM).find("head").append("<style id='scrapesave-style'>" + data + "</style>");
 	});
 
@@ -346,7 +346,7 @@ var loc = {
 
 
 $(document).ready(function(){
-	var sidebarUrl = chrome.extension.getURL("scripts/sidebar.html");
+	var sidebarUrl = chrome.extension.getURL("resources/sidebar.html");
 	
 
 	//Add custom css styling for highlighted sections
@@ -445,8 +445,19 @@ $(document).ready(function(){
 				a.push(title + "<br>" + body);
 			}
 			
+			console.log("SAVE");
 			//Save the data
-			saveAs(new Blob(a, {type: "text/html;charset=utf-8"}), "saved_site.html");
+
+			var blob = new Blob(a, {type: "text/html;charset=utf-8"});
+			console.log("BLOB");
+			console.log(a);
+			try{
+				saveAs(blob, "saved_site.html");
+			}
+			catch (err){
+				console.log(err);
+			}
+			console.log("DONE");
 		});
 
 
@@ -466,6 +477,7 @@ $(document).ready(function(){
 
 		//Preview-button on table entries. Opens page in iframe
 		sideDOM.on("click", "#table-found td.view-button", function(e){
+			
 			e.stopPropagation();
 			var idx = sideDOM.find("#table-found tr").index($(e.target).closest("tr"));
 

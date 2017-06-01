@@ -24,10 +24,10 @@
   },
 
   "web_accessible_resources": [
-    "scripts/sidebar.html",
-    "scripts/sidebar_style.html",
-    "scripts/page_style.html",
-    "icons/open-iconic/svg/*.svg"
+    "scripts/content_script.js",
+    "libraries/*",
+    "resources/*",
+    "icons/open-iconic.min.svg"
   ]
 
 }
