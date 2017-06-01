@@ -234,9 +234,10 @@ function generatePagePaths(loc){
 }
 
 function getIconString(name){
-	return "<img class='pictogram' src='" +
-		chrome.extension.getURL("icons/open-iconic/svg/" + name + ".svg") + 
-		"'>"
+	return '<svg viewBox="0 0 8 8" class="pictogram"><use xlink:href="' +
+			chrome.extension.getURL("icons/open-iconic-master/sprite/open-iconic.svg") +
+			'#' + name + '" class="icon-account-login pictogram"></use></svg>'
+
 }
 
 function updateTable(idx, list){
@@ -321,9 +322,12 @@ function applyPagePaths(loc, DOM){
 }
 
 function injectCSS(DOM){
+	
 	$.get(chrome.extension.getURL("scripts/page_style.css"), function(data){
 		$(DOM).find("head").append("<style id='scrapesave-style'>" + data + "</style>");
 	});
+
+
 }
 
 
@@ -364,6 +368,8 @@ $(document).ready(function(){
 		
 		//The DOM for the sidebar
 		sideDOM = $("#scrapesave-sidebar").contents();
+
+	
 
 		//Inject icons
 		sideDOM.find("#manual-links").html(getIconString("pencil"));
@@ -460,7 +466,11 @@ $(document).ready(function(){
 
 		//Preview-button on table entries. Opens page in iframe
 		sideDOM.on("click", "#table-found td.view-button", function(e){
+			e.stopPropagation();
 			var idx = sideDOM.find("#table-found tr").index($(e.target).closest("tr"));
+
+			//Remove old highlight
+			$(sideDOM).find("#table-found .activeIcon").removeClass("activeIcon");
 
 			//Clicking on already opened preview button means close the preview
 			if($("#scrapesave-preview").attr("src") == pages[idx].url){
@@ -492,6 +502,10 @@ $(document).ready(function(){
 
 			//Set specified url as src
 			$("#scrapesave-preview").attr("src", pages[idx].url);
+
+			//Highlight active icon
+			console.log($(e.target));
+			$(e.target).closest("td").addClass("activeIcon");
 
 			//Wait for iframe to load then inject CSS and click handlers
 			$("#scrapesave-preview").on("load", function(){

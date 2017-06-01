@@ -117,3 +117,7 @@ td.x-button{
 	width:16px;
 }
 
+.activeIcon {
+	fill:red;
+}
+
