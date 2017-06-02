@@ -315,6 +315,7 @@ function pageClickCallback(e){
 }
 
 function applyPagePaths(loc, DOM){
+	console.log(DOM);
 	var paths = generatePagePaths(loc);
 
 	for(var key in paths){
@@ -322,18 +323,16 @@ function applyPagePaths(loc, DOM){
 		paths[key] = recurseWalk(DOM, paths[key], 0, 1);
 		$(paths[key]).addClass("scrapesave-" + key);
 	}
+	
 	console.log(paths)
 	return paths;
 
 }
 
 function injectCSS(DOM){
-	
 	$.get(chrome.extension.getURL("resources/page_style.css"), function(data){
 		$(DOM).find("head").append("<style id='scrapesave-style'>" + data + "</style>");
 	});
-
-
 }
 
 
@@ -468,6 +467,7 @@ $(document).ready(function(){
 
 			//Clicking on already opened preview button means close the preview
 			if($("#scrapesave-preview").attr("src") == pages[idx].url){
+				console.log("RETURN");
 				//Reapply selections
 				loc = applyPagePaths(loc, document);
 				
@@ -484,9 +484,8 @@ $(document).ready(function(){
 				return;
 			}
 
-			//No src means no currently opened preview.
-			if($("#scrapesave-preview").attr("src") == ""){
-				
+			else{
+
 				//Remove scrollbar on page
 				$("body").css("overflow", "hidden");
 
@@ -495,22 +494,25 @@ $(document).ready(function(){
 				
 				//Move sidebar to left of the scrollbar.
 				$("#scrapesave-sidebar").css("right", getScrollbarWidth() + "px");
+
+				//Set specified url as src
+				$("#scrapesave-preview").attr("src", pages[idx].url);
+
+				//Highlight active icon
+				$(e.target).closest("td").addClass("activeIcon");
 			}
+		});
 
-			//Set specified url as src
-			$("#scrapesave-preview").attr("src", pages[idx].url);
-
-			//Highlight active icon
-			console.log($(e.target));
-			$(e.target).closest("td").addClass("activeIcon");
-
-			//Wait for iframe to load then inject CSS and click handlers
-			$("#scrapesave-preview").on("load", function(){
+		//Whenever iframe loads inject CSS and click handlers
+		$("#scrapesave-preview").on("load", function(){
+			if($("#scrapesave-preview").attr("src") != ""){
 				var pageDOM = $("#scrapesave-preview").contents();
 				injectCSS(pageDOM);
 				$(pageDOM).click(pageClickCallback);
 				loc = applyPagePaths(loc, pageDOM);
-			});
+				console.log("OPEMED");
+			}
+			
 		});
 
 		//Reverses the order of the pages
