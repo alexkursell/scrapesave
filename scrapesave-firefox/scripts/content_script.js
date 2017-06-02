@@ -102,9 +102,7 @@ function getSelectorPath(e) {
     if ($(e).prop('tagName')) {
 
         var path = getSelectorPath($(e).parent());
-        if($(e).attr('id') != "scrapesave-wrapper"){
-        	path.push(getFindSelector(e));
-        }
+        path.push(getFindSelector(e));
         
         return path;
     }
@@ -321,9 +319,10 @@ function applyPagePaths(loc, DOM){
 
 	for(var key in paths){
 		$(DOM).find(".scrapesave-" + key).removeClass("scrapesave-" + key);
-		$(recurseWalk(DOM, paths[key], 0, 1)).addClass("scrapesave-" + key);
+		paths[key] = recurseWalk(DOM, paths[key], 0, 1);
+		$(paths[key]).addClass("scrapesave-" + key);
 	}
-
+	console.log(paths)
 	return paths;
 
 }
@@ -357,8 +356,7 @@ $(document).ready(function(){
 	injectCSS(document);
 	
 
-	//Wrap page and create sidebar
-	$('body').wrapInner("<div id='scrapesave-wrapper'></div>");
+	//Create sidebar
 	
 	$('body').append("<iframe id='scrapesave-sidebar' scrolling='no' src='" + 
 		chrome.extension.getURL("resources/sidebar.html") + 
@@ -368,7 +366,7 @@ $(document).ready(function(){
 
 	
 	//Prevent clicking links
-	$("#scrapesave-wrapper").click(pageClickCallback);
+	$("*:not(#scrapesave-sidebar, #scrapesave-preview)").click(pageClickCallback);
 	
 	//All of the event handlers for the actual sidebar
 	$('#scrapesave-sidebar').on("load", function(){
@@ -470,6 +468,8 @@ $(document).ready(function(){
 
 			//Clicking on already opened preview button means close the preview
 			if($("#scrapesave-preview").attr("src") == pages[idx].url){
+				//Reapply selections
+				loc = applyPagePaths(loc, document);
 				
 				//Allow scrolling on body again
 				$("body").css("overflow", "auto");
@@ -481,8 +481,6 @@ $(document).ready(function(){
 				//Move sidebar back to right of screen
 				$("#scrapesave-sidebar").css("right", "0");
 
-				//Reapply selections
-				loc = applyPagePaths(loc, document);
 				return;
 			}
 
