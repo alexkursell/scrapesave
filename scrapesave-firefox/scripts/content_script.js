@@ -175,10 +175,13 @@ function refreshElements(list, idx, paths){
 }
 
 function scanItemCompleted(requestsCompleted, requestsTotal){
-
 	if(requestsCompleted == requestsTotal){
+		$(sideDOM).find("#begin-scan div").css("width", "0%");
 		sideDOM.find("#save").prop("disabled", false);
+		return;
 	}
+
+	$(sideDOM).find("#begin-scan div").css("width",  (100 * requestsCompleted / requestsTotal) + "%");
 }
 
 function scan(paths, list){
