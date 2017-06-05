@@ -467,13 +467,30 @@ $(document).ready(function(){
 			var a = [];
 			for(var idx = 0; idx < pages.length; idx++){
 				var page = pages[idx];
-				var title = '<h1 class="chapter">' + page.title + '</h1>';
+				var title = '<h1 class="chapter" id="scrapesave-chapter-' + idx + '">' + page.title + '</h1>';
 				var body = $(page.body).html();
+				
+				$(body).find("a").each(function(index){
+					var link = getAbsolutePath($(this).attr("href"));
+					
+					if(link in savedpages){
+						var i = pages.indexOf(savedpages[link]);
+						if(i > -1){
+							console.log("ALSOFOUND: " + link)
+							$(this).attr("href", "#scrapesave-chapter-" + i);
+							console.log($(this).attr("href"));
+							console.log("CHANGED? " + index);
+						}
+					}
+				});
+
+				console.log($(body).find("a"))
+
 				a.push(title + "<br>" + body);
 			}
 			
 			//Save the data
-			saveAs(new Blob(a, {type: "text/html;charset=utf-8"}), "saved_site.html");
+			//saveAs(new Blob(a, {type: "text/html;charset=utf-8"}), "saved_site.html");
 		});
 
 		//X-Button on table entries. Removes entry.
@@ -593,6 +610,8 @@ $(document).ready(function(){
 		});
 	});
 });
+
+
 }
 
 
