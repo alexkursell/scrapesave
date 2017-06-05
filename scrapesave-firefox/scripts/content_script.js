@@ -221,28 +221,26 @@ function scan(paths, list){
 	}
 }
 
-function followNexts(prev, url, paths){
-	console.log(url);
+function scanNexts(prev, url, paths){
 	if(!url){
 		return;
 	}
 	
 	url = getAbsolutePath(url);
-	console.log(url);
 	if(prev.indexOf(url) > -1){
 		return;
 	}
-	console.log(url)
 
 	prev.push(url);
+	console.log(url)
 
 	$.get(url, function(data){
 		console.log("GOT " + url);
 		parser = new DOMParser();
 		data = {"url" : url, "html" : $(parser.parseFromString(data, "text/html"))};
-		followNexts(prev, $(recurseWalk(data.html, paths.next, 0, 1)).attr("href"), paths);
-	}).always(function(){
-		console.log("DONE " + url);
+		pages.push(data)
+		refreshElements(pages, pages.length - 1, paths);
+		scanNexts(prev, $(pages[pages.length - 1].next).attr("href"), paths);
 	});
 
 }
@@ -544,7 +542,7 @@ $(document).ready(function(){
 		//Reverses the order of the pages
 		sideDOM.find("#reverse-order").click(function(e){
 			console.log("follow");
-			followNexts([], $(loc.next).attr("href"), generatePagePaths(loc));
+			scanNexts([], $(loc.next).attr("href"), generatePagePaths(loc));
 			console.log("followed");
 			//Obvious
 			pages.reverse();
