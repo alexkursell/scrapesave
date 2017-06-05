@@ -359,6 +359,9 @@ function injectCSS(DOM){
 	});
 }
 
+//Only run stuff if the content_script has not already been loaded
+if(typeof(sideDOM) == "undefined"){
+
 
 //Important global variables
 sideDOM = null;
@@ -372,6 +375,7 @@ var loc = {
 	"next": null,
 	"pageslist": null
 }
+
 
 $(document).ready(function(){
 	//Add custom css styling for highlighted sections
@@ -542,7 +546,7 @@ $(document).ready(function(){
 		//Reverses the order of the pages
 		sideDOM.find("#reverse-order").click(function(e){
 			console.log("follow");
-			scanNexts([], $(loc.next).attr("href"), generatePagePaths(loc));
+			scanNexts([], window.location.href, generatePagePaths(loc));
 			console.log("followed");
 			//Obvious
 			pages.reverse();
@@ -589,3 +593,7 @@ $(document).ready(function(){
 		});
 	});
 });
+}
+
+
+
