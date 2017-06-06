@@ -21,7 +21,8 @@
 	bottom:0;
 	right:0;
 	height:66vh;
-	width:33vw
+	width:33vw;
+	min-width:500px;
 }
 #scrapesave-preview {
 	position:fixed;

@@ -448,10 +448,12 @@ $(document).ready(function(){
 			}
 		});
 
-		//Get all HTML files in the table
-		sideDOM.find("#begin-scan").click(function(e){
-			scan(generatePagePaths(loc), pages);
-		})
+		//Gets all links by following "nexts"
+		sideDOM.find("#next-scan").click(function(e){
+			sideDOM.find("#table-found").empty();
+			scanNexts([], window.location.href, generatePagePaths(loc));
+		});
+		
 
 		//Gets all specified links, adds them to the table
 		sideDOM.find("#pages-scan").click(function(e){
@@ -570,9 +572,6 @@ $(document).ready(function(){
 
 		//Reverses the order of the pages
 		sideDOM.find("#reverse-order").click(function(e){
-			console.log("follow");
-			scanNexts([], window.location.href, generatePagePaths(loc));
-			console.log("followed");
 			//Obvious
 			pages.reverse();
 
