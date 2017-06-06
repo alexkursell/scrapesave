@@ -86,6 +86,10 @@ form {
 	background-color: #cdcdcd;
 }
 
+.activeTabButton{
+	background-color: #cdcdcd !important;
+}
+
 button:disabled{
 	background-color: #dadada;
 	color: #a7a7a7;
@@ -117,9 +121,55 @@ div#tab-help.activeTab{
 	display:block;
 }
 
-.highlight{
-	background-color: yellow;
+#titlelabel{
+	background-color:orange;
 }
+
+#bodylabel{
+	background-color: yellow;
+	margin-top: 10px;
+	height: 66%;
+}
+
+#nextlabel{
+	background-color:green;
+	margin-top: 10px;
+	float: right;
+	width:auto;
+	overflow:auto;
+}
+
+#listlabel{
+	background-color: pink;
+	margin-top: 10px;
+	float: left;
+	width:auto;
+}
+
+#chooseelement {
+	display: flex;
+	flex-direction: column;
+	margin: 20px;
+}
+
+.notHighlighted {
+	background-color: white !important;
+}
+
+#chooseelement label {
+	display: flex;
+	border: 1px solid black;
+	box-sizing: border-box;
+	flex-grow: 1;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+}
+#chooseelement label input{
+	display:none;
+
+}
+
 
 td{
 	width:100%;

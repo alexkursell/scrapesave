@@ -6,7 +6,7 @@
 
   
   <div id="tabbar" class="button-panel">
-    <button class="tabbutton" id="button-onpage">Select Elements</button>
+    <button class="tabbutton activeTabButton" id="button-onpage">Select Elements</button>
     <button class="tabbutton" id="button-found">Pages Found</button>
     <button class="tabbutton" id="button-output">Output Options</button>
     <button class="tabbutton" id="button-help">Help</button>
@@ -14,11 +14,12 @@
   </div>
   
   <div id="tab-onpage" class="tab activeTab">
+    <br>
     <form id='chooseelement'>
-      <label><input type='radio' name='item' value='title' checked="checked">Title</input></label><br>
-      <label><input type='radio' name='item' value='body'>Body</input></label><br>
-      <label><input type='radio' name='item' value='next'>Next Page Link</input></label><br>
-      <label><input type='radio' name='item' value='pageslist'>List of Pages</input></label><br>
+      <label id="titlelabel"><input type='radio' name='item' value='title' checked="checked">Title</input></label>
+      <label id="bodylabel" class="notHighlighted"><input type='radio' name='item' value='body'>Body</input></label>
+      <label id="nextlabel" class="notHighlighted"><input type='radio' name='item' value='next'>Next Page Link</input></label>
+      <label id="listlabel" class="notHighlighted"><input type='radio' name='item' value='pageslist'>List of Pages</input></label>
     </form>
     <div id="onpage-panel" class="button-panel">
       <button id="up">Select Up</button>

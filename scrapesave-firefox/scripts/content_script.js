@@ -406,6 +406,8 @@ $(document).ready(function(){
 
 		//Implement tab switching
 		sideDOM.find("#tabbar button").click(function(e){
+			$(sideDOM).find(".activeTabButton").removeClass("activeTabButton");
+			$(e.target).addClass("activeTabButton")
 			var sel = $(e.target).attr("id").replace("button-", "");
 
 			sel = "#tab-" + sel;
@@ -413,6 +415,13 @@ $(document).ready(function(){
 			sideDOM.find(".activeTab").removeClass("activeTab");
 			sideDOM.find(sel).addClass("activeTab");
 
+		});
+
+		//Highlighing of selection menu
+		sideDOM.find("#chooseelement label input").click(function(e){
+			e.stopPropagation();
+			sideDOM.find("#chooseelement label:not(.notHighlighted)").addClass("notHighlighted");
+			$(e.target).parent().removeClass("notHighlighted");
 		});
 
 		//Deselect currently selected attribute
@@ -555,7 +564,6 @@ $(document).ready(function(){
 				injectCSS(pageDOM);
 				$(pageDOM).click(pageClickCallback);
 				loc = applyPagePaths(loc, pageDOM);
-				console.log("OPEMED");
 			}
 			
 		});
