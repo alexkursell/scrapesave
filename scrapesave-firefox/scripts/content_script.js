@@ -172,14 +172,43 @@ function refreshElements(list, idx, paths){
 	updateTable(idx, list);
 }
 
+function save(){
+	//Construct the saved html
+	var a = [];
+	for(var idx = 0; idx < pages.length; idx++){
+		var page = pages[idx];
+		var title = '<h1 class="chapter" id="scrapesave-chapter-' + idx + '">' + page.title + '</h1>';
+		var body = $(page.body).html();
+		
+		$(body).find("a").each(function(index){
+			$(body).find("a").eq(index).html("ZOMBO");
+			var link = getAbsolutePath($(this).attr("href"));
+			if(link in savedpages){
+				var i = pages.indexOf(savedpages[link]);
+				if(i > -1){
+					console.log(link + " " + i);
+					$(body).find(this).attr("href", "#scrapesave-chapter-" + i);
+				}
+			}
+		}).promise().done(function(){
+			console.log(body  + "");
+			a.push(title + "<br>" + body);
+		});
+
+	}
+	
+	//Save the data
+	//saveAs(new Blob(a, {type: "text/html;charset=utf-8"}), "saved_site.html");
+}
+
 function scanItemCompleted(requestsCompleted, requestsTotal){
 	if(requestsCompleted == requestsTotal){
-		$(sideDOM).find("#begin-scan div").css("width", "0%");
-		sideDOM.find("#save").prop("disabled", false);
+		$(sideDOM).find("#save div").css("width", "0%");
+		save();
 		return;
 	}
 
-	$(sideDOM).find("#begin-scan div").css("width",  (100 * requestsCompleted / requestsTotal) + "%");
+	$(sideDOM).find("#save div").css("width",  (100 * requestsCompleted / requestsTotal) + "%");
 }
 
 function scan(paths, list){
@@ -334,13 +363,11 @@ function pageClickCallback(e){
 	
 	loc[sel] = e.target;
 
-	sideDOM.find("#save").prop("disabled", true);
 
 }
 
 function applyPagePaths(loc, DOM){
-	console.log(DOM);
-	var paths = generatePagePaths(loc);
+	var paths = loc;
 
 	for(var key in paths){
 		$(DOM).find(".scrapesave-" + key).removeClass("scrapesave-" + key);
@@ -473,35 +500,7 @@ $(document).ready(function(){
 
 		//Save pages
 		sideDOM.find("#save").click(function(e){
-			//Construct the saved html
-			
-			var a = [];
-			for(var idx = 0; idx < pages.length; idx++){
-				var page = pages[idx];
-				var title = '<h1 class="chapter" id="scrapesave-chapter-' + idx + '">' + page.title + '</h1>';
-				var body = $(page.body).html();
-				
-				$(body).find("a").each(function(index){
-					var link = getAbsolutePath($(this).attr("href"));
-					
-					if(link in savedpages){
-						var i = pages.indexOf(savedpages[link]);
-						if(i > -1){
-							console.log("ALSOFOUND: " + link)
-							$(this).attr("href", "#scrapesave-chapter-" + i);
-							console.log($(this).attr("href"));
-							console.log("CHANGED? " + index);
-						}
-					}
-				});
-
-				console.log($(body).find("a"))
-
-				a.push(title + "<br>" + body);
-			}
-			
-			//Save the data
-			//saveAs(new Blob(a, {type: "text/html;charset=utf-8"}), "saved_site.html");
+			scan(generatePagePaths(loc), pages);
 		});
 
 		//X-Button on table entries. Removes entry.
@@ -521,6 +520,9 @@ $(document).ready(function(){
 			//Remove old highlight
 			$(sideDOM).find("#table-found .activeIcon").removeClass("activeIcon");
 
+
+			loc = generatePagePaths(loc)
+			
 			//Clicking on already opened preview button means close the preview
 			if($("#scrapesave-preview").attr("src") == pages[idx].url){
 				console.log("RETURN");
@@ -539,6 +541,7 @@ $(document).ready(function(){
 
 				return;
 			}
+
 
 			else{
 
@@ -588,6 +591,7 @@ $(document).ready(function(){
 			if(sideDOM.find("#textarea-found").hasClass("activeFound")){
 				//Get the new list of pages from the textarea.
 				pages = parseTextList(sideDOM.find("#textarea-found").val());
+				sideDOM.find("#table-found").html("");
 				
 				//Update the whole table with new page information.
 				for(var i = 0; i < pages.length; i++){
