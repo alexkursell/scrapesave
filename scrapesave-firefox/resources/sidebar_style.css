@@ -187,3 +187,7 @@ td.x-button{
 	fill:red;
 }
 
+.disabledIcon {
+	fill: grey;
+}
+

@@ -198,13 +198,12 @@ function save(){
 	}
 	
 	//Save the data
-	//saveAs(new Blob(a, {type: "text/html;charset=utf-8"}), "saved_site.html");
+	saveAs(new Blob(a, {type: "text/html;charset=utf-8"}), "saved_site.html");
 }
 
 function scanItemCompleted(requestsCompleted, requestsTotal){
 	if(requestsCompleted == requestsTotal){
 		$(sideDOM).find("#save div").css("width", "0%");
-		save();
 		return;
 	}
 
@@ -310,6 +309,10 @@ function updateTable(idx, list){
 		"</td><td class='view-button'>" + getIconString("eye") + 
 		"</td><td class='x-button'>" + getIconString("x") + 
 		"</td>");
+
+	if(getAbsolutePath(list[idx].url) == getAbsolutePath(window.location.href)){
+		sideDOM.find("#table-found tr").eq(idx).find(".view-button").addClass("disabledIcon");
+	}
 }
 
 function parseTextList(text){
@@ -341,7 +344,8 @@ function createTextList(pages){
 }
 
 function pageClickCallback(e){
-	e.preventDefault();
+	console.log("CALBACK");
+	//e.preventDefault();
 		
 	var sel = getSelectedBox(sideDOM);
 
@@ -500,7 +504,7 @@ $(document).ready(function(){
 
 		//Save pages
 		sideDOM.find("#save").click(function(e){
-			scan(generatePagePaths(loc), pages);
+			save();
 		});
 
 		//X-Button on table entries. Removes entry.
@@ -512,10 +516,11 @@ $(document).ready(function(){
 		});
 
 		//Preview-button on table entries. Opens page in iframe
-		sideDOM.on("click", "#table-found td.view-button", function(e){
+		sideDOM.on("click", "#table-found td.view-button:not(.disabledIcon)", function(e){
 			
 			e.stopPropagation();
 			var idx = sideDOM.find("#table-found tr").index($(e.target).closest("tr"));
+
 
 			//Remove old highlight
 			$(sideDOM).find("#table-found .activeIcon").removeClass("activeIcon");
@@ -564,6 +569,7 @@ $(document).ready(function(){
 
 		//Whenever iframe loads inject CSS and click handlers
 		$("#scrapesave-preview").on("load", function(){
+			console.log("LOADED");
 			if($("#scrapesave-preview").attr("src") != ""){
 				var pageDOM = $("#scrapesave-preview").contents();
 				injectCSS(pageDOM);
