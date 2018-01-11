@@ -345,7 +345,7 @@ function createTextList(pages){
 
 function pageClickCallback(e){
 	console.log("CALBACK");
-	//e.preventDefault();
+	e.preventDefault();
 		
 	var sel = getSelectedBox(sideDOM);
 
@@ -385,14 +385,15 @@ function applyPagePaths(loc, DOM){
 }
 
 function injectCSS(DOM){
-	$.get(chrome.extension.getURL("resources/page_style.css"), function(data){
-		$(DOM).find("head").append("<style id='scrapesave-style'>" + data + "</style>");
-	});
+	$(DOM).find("head").append("<link id='scrapesave-style' href='" +
+		chrome.extension.getURL("resources/page_style.css") +
+		"' type='text/css' rel='stylesheet' />");
 }
 
 //Only run stuff if the content_script has not already been loaded
 if(typeof(sideDOM) == "undefined"){
-
+console.log("HI")
+console.log(chrome);
 
 //Important global variables
 sideDOM = null;
@@ -488,13 +489,17 @@ $(document).ready(function(){
 
 		//Gets all specified links, adds them to the table
 		sideDOM.find("#pages-scan").click(function(e){
-			sideDOM.find("#table-found").empty();
-			
-			pages = extractURLList($(loc["pageslist"]));
-			for(var i = 0; i < pages.length; i++){
-				updateTable(i, pages);
+			npages = extractURLList($(loc["pageslist"]));
+			console.log(npages)
+			if(npages.length > 0){
+				pages = npages
+				sideDOM.find("#table-found").empty();
+				for(var i = 0; i < pages.length; i++){
+					updateTable(i, pages);
+				}	
 			}
-
+		
+			scan(generatePagePaths(loc), pages);
 		});
 
 		//Close by refreshing page.
@@ -630,6 +635,4 @@ $(document).ready(function(){
 
 
 }
-
-
 
